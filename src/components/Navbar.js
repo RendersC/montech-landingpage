@@ -63,7 +63,7 @@ const Navbar = () => {
               onChange={(e) => i18n.changeLanguage(e.target.value)}
             >
               <option value="en">EN</option>
-              <option value="hi">HI</option>
+              <option value="kk">KK</option>
               <option value="ru">RU</option>
             </select>
           </div>

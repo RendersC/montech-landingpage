@@ -55,7 +55,7 @@ const Contact = () => {
   
 
   const openTelegram = () => {
-    window.open('https://t.me/MonTech_IT_Bot', '_blank');
+    window.open('https://t.me/sdpazdacha', '_blank');
   };
 
   const openWhatsApp = () => {

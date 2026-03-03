@@ -1,43 +1,44 @@
 import i18n from 'i18next';
-import {initReactI18next} from 'react-i18next';
+import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 import translationEN from './locales/en/translation.json';
 import translationRU from './locales/ru/translation.json';
-import translationHI from './locales/hi/translation.json';
+import translationKK from './locales/kk/translation.json';
 
 const resources = {
-    en : {
-        translation : translationEN,
-    },
-    ru : {
-        translation : translationRU,
-    },
-    hi : {
-        translation : translationHI,
-    },
+  en: {
+    translation: translationEN,
+  },
+  ru: {
+    translation: translationRU,
+  },
+  kk: {
+    translation: translationKK,
+  },
 };
 
-i18n 
-// 1. Use the languase detector plugin
-.use(LanguageDetector)
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: 'en',
 
-// 2. Pass the i18n instance to react-i18next
+    supportedLngs: ['en', 'ru', 'kk'],
 
-.use(initReactI18next)
+    detection: {
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      caches: ['localStorage'],
+    },
 
-// 3. Initialize i18next
+    interpolation: {
+      escapeValue: false,
+    },
 
-.init({
-    resources, // your translations
-    fallbackLng: 'en', // Default Languase if detection fails
-    supportedLngs: ['en', 'hi', 'ru'],
-
-    interpolation : {
-        
-        //React already protects from XSS attacks
-        escapeValue : false,
-    }
-})
+    react: {
+      useSuspense: false,
+    },
+  });
 
 export default i18n;
