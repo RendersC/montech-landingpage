@@ -1,28 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+
+const LANGUAGES = [
+  { code: 'ru', label: 'RU', full: 'Русский' },
+  { code: 'en', label: 'EN', full: 'English' },
+  { code: 'kk', label: 'KK', full: 'Қазақша' },
+];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const { t, i18n } = useTranslation();
-  
+  const langRef = useRef(null);
+
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (element) element.scrollIntoView({ behavior: 'smooth' });
     setIsOpen(false);
   };
+
+  const currentLang = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
+
+  const navItems = [
+    { key: 'services', label: t('nav.services') },
+    { key: 'why-us', label: t('nav.whyUs') },
+    { key: 'cases', label: t('nav.cases') },
+    { key: 'reviews', label: t('nav.reviews') },
+    { key: 'contact', label: t('nav.contact') },
+  ];
 
   return (
     <motion.nav
@@ -45,7 +69,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8 items-center">
-            {[{ key: 'services', label: t('nav.services') }, { key: 'why-us', label: t('nav.whyUs') }, { key: 'cases', label: t('nav.cases') }, { key: 'reviews', label: t('nav.reviews') }, { key: 'contact', label: t('nav.contact') }].map((item) => (
+            {navItems.map((item) => (
               <motion.button
                 key={item.key}
                 whileHover={{ scale: 1.05 }}
@@ -57,15 +81,49 @@ const Navbar = () => {
               </motion.button>
             ))}
 
-            <select
-              className="ml-4 border border-gray-300 rounded-md px-2 py-1 text-sm"
-              value={i18n.language}
-              onChange={(e) => i18n.changeLanguage(e.target.value)}
-            >
-              <option value="en">EN</option>
-              <option value="kk">KK</option>
-              <option value="ru">RU</option>
-            </select>
+            {/* Custom Language Switcher */}
+            <div className="relative ml-4" ref={langRef}>
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:border-primary-400 hover:bg-primary-50 transition-all duration-200 text-sm font-semibold text-gray-700"
+              >
+                {currentLang.label}
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {langOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50"
+                  >
+                    {LANGUAGES.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          i18n.changeLanguage(lang.code);
+                          setLangOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors duration-150 ${
+                          i18n.language === lang.code
+                            ? 'bg-primary-50 text-primary-700'
+                            : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span className="font-bold text-xs w-6">{lang.label}</span>
+                        <span className="text-gray-500 font-normal">{lang.full}</span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* CTA Button */}
@@ -75,7 +133,7 @@ const Navbar = () => {
             className="hidden md:block btn-primary"
             onClick={() => scrollToSection('contact')}
           >
-            Get a Quote
+            {t('getAQuote')}
           </motion.button>
 
           {/* Mobile Menu Button */}
@@ -88,45 +146,56 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Navigation */}
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-gray-200"
-          >
-            <div className="py-4 space-y-4">
-              {[{ key: 'services', label: t('nav.services') }, { key: 'why-us', label: t('nav.whyUs') }, { key: 'cases', label: t('nav.cases') }, { key: 'reviews', label: t('nav.reviews') }, { key: 'contact', label: t('nav.contact') }].map((item) => (
-                <button
-                  key={item.key}
-                  className="block w-full text-left px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-                  onClick={() => scrollToSection(item.key)}
-                >
-                  {item.label}
-                </button>
-              ))}
-              <div className="px-4 pt-4">
-                <button
-                  className="w-full btn-primary"
-                  onClick={() => scrollToSection('contact')}
-                >
-                  {t('getAQuote')}
-                </button>
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-white border-t border-gray-200 overflow-hidden"
+            >
+              <div className="py-4 space-y-2">
+                {navItems.map((item) => (
+                  <button
+                    key={item.key}
+                    className="block w-full text-left px-4 py-2.5 text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition-colors duration-200 font-medium"
+                    onClick={() => scrollToSection(item.key)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+
+                <div className="px-4 pt-2">
+                  <button
+                    className="w-full btn-primary"
+                    onClick={() => scrollToSection('contact')}
+                  >
+                    {t('getAQuote')}
+                  </button>
+                </div>
+
+                {/* Mobile Language Switcher */}
+                <div className="px-4 pt-2">
+                  <div className="flex gap-2">
+                    {LANGUAGES.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => i18n.changeLanguage(lang.code)}
+                        className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                          i18n.language === lang.code
+                            ? 'bg-primary-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {lang.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="px-4">
-                <select
-                  className="w-full border border-gray-300 rounded-md px-2 py-2 text-sm"
-                  value={i18n.language}
-                  onChange={(e) => i18n.changeLanguage(e.target.value)}
-                >
-                  <option value="en">EN</option>
-                  <option value="hi">HI</option>
-                  <option value="ru">RU</option>
-                </select>
-              </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.nav>
   );

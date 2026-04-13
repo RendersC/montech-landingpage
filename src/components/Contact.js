@@ -24,30 +24,52 @@ const Contact = () => {
     }));
   };
 
+  const sendToTelegram = async (name, email, message) => {
+    const BOT_TOKEN = '8631734357:AAEWTyh_iE5zc4N-TVL-1sAgXwHd_dVSpps';
+    const CHAT_ID = '1555289492';
+    const text = `🔔 *Новая заявка с сайта MonTech IT*\n\n👤 *Имя:* ${name}\n📧 *Email:* ${email}\n\n💬 *Сообщение:*\n${message}`;
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'Markdown' }),
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus(null);
-  
+
     try {
-      // Create a new document in Appwrite
+      // Save to Appwrite
       await databases.createDocument(
-        DATABASE_ID,              // Database ID from appwrite.js
-        CONTACT_COLLECTION_ID,    // Collection ID from appwrite.js
-        ID.unique(),              // Auto-generate unique document ID
+        DATABASE_ID,
+        CONTACT_COLLECTION_ID,
+        ID.unique(),
         {
           name: formData.name,
           email: formData.email,
           message: formData.message,
         }
       );
-  
+
+      // Send notification to Telegram
+      await sendToTelegram(formData.name, formData.email, formData.message);
+
       setSubmitStatus('success');
       setSubmittedName(formData.name);
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error('Error submitting form:', error);
-      setSubmitStatus('error');
+      // Still try Telegram even if Appwrite fails
+      try {
+        await sendToTelegram(formData.name, formData.email, formData.message);
+        setSubmitStatus('success');
+        setSubmittedName(formData.name);
+        setFormData({ name: '', email: '', message: '' });
+      } catch {
+        setSubmitStatus('error');
+      }
     } finally {
       setIsSubmitting(false);
     }

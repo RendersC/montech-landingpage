@@ -1,45 +1,80 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { databases, DATABASE_ID, CASES_COLLECTION_ID } from '../config/appwrite';
+import { Query } from 'appwrite';
+
+const DEFAULT_IMAGES = [
+  'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=2070&q=80',
+  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=2070&q=80',
+  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=2015&q=80',
+];
 
 const CaseStudies = () => {
   const { t } = useTranslation();
-  const caseStudies = [
+  const [cases, setCases] = useState(null);
+
+  const staticCases = [
     {
       title: t('cases.items.0.title'),
       company: 'TechStore Pro',
       description: t('cases.items.0.description'),
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: DEFAULT_IMAGES[0],
       results: [t('cases.items.0.results.0'), t('cases.items.0.results.1'), t('cases.items.0.results.2')],
-      category: t('cases.items.0.category')
+      category: t('cases.items.0.category'),
     },
     {
       title: t('cases.items.1.title'),
       company: 'DataFlow Solutions',
       description: t('cases.items.1.description'),
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: DEFAULT_IMAGES[1],
       results: [t('cases.items.1.results.0'), t('cases.items.1.results.1'), t('cases.items.1.results.2')],
-      category: t('cases.items.1.category')
+      category: t('cases.items.1.category'),
     },
     {
       title: t('cases.items.2.title'),
       company: 'GrowthStart Inc',
       description: t('cases.items.2.description'),
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2015&q=80',
+      image: DEFAULT_IMAGES[2],
       results: [t('cases.items.2.results.0'), t('cases.items.2.results.1'), t('cases.items.2.results.2')],
-      category: t('cases.items.2.category')
-    }
+      category: t('cases.items.2.category'),
+    },
   ];
+
+  useEffect(() => {
+    const loadCases = async () => {
+      if (!CASES_COLLECTION_ID || !DATABASE_ID) return;
+      try {
+        const res = await databases.listDocuments(DATABASE_ID, CASES_COLLECTION_ID, [
+          Query.orderDesc('$createdAt'),
+          Query.limit(20),
+        ]);
+        if (res.documents.length > 0) {
+          const dynamic = res.documents.map((doc, i) => ({
+            title: doc.caseTitle,
+            company: '',
+            description: doc.caseDescription,
+            image: DEFAULT_IMAGES[i % 3],
+            results: [doc.outcome0, doc.outcome1, doc.outcome2].filter(Boolean),
+            category: doc.category,
+          }));
+          setCases(dynamic);
+        }
+      } catch {
+        // Fallback to static
+      }
+    };
+    loadCases();
+  }, []);
+
+  const displayCases = cases || staticCases;
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.1,
-      },
+      transition: { staggerChildren: 0.3, delayChildren: 0.1 },
     },
   };
 
@@ -48,10 +83,7 @@ const CaseStudies = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
+      transition: { duration: 0.6, ease: 'easeOut' },
     },
   };
 
@@ -82,7 +114,7 @@ const CaseStudies = () => {
           viewport={{ once: true }}
           className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {caseStudies.map((study, index) => (
+          {displayCases.map((study, index) => (
             <motion.div
               key={index}
               variants={cardVariants}
@@ -106,32 +138,25 @@ const CaseStudies = () => {
 
               {/* Content */}
               <div className="p-6">
-                {/* Company */}
-                <p className="text-sm text-primary-600 font-semibold mb-2">
-                  {study.company}
-                </p>
-
-                {/* Title */}
+                {study.company && (
+                  <p className="text-sm text-primary-600 font-semibold mb-2">
+                    {study.company}
+                  </p>
+                )}
                 <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-200">
                   {study.title}
                 </h3>
-
-                {/* Description */}
                 <p className="text-gray-600 mb-4 leading-relaxed">
                   {study.description}
                 </p>
-
-                {/* Results */}
                 <div className="space-y-2 mb-4">
                   {study.results.map((result, resultIndex) => (
                     <div key={resultIndex} className="flex items-center text-sm text-gray-600">
-                      <TrendingUp className="w-4 h-4 text-green-500 mr-2" />
+                      <TrendingUp className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
                       {result}
                     </div>
                   ))}
                 </div>
-
-                {/* Learn More Button */}
                 <motion.button
                   whileHover={{ x: 5 }}
                   className="flex items-center text-primary-600 font-semibold group-hover:text-primary-700 transition-colors duration-200"
