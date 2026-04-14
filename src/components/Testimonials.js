@@ -81,8 +81,8 @@ const Testimonials = () => {
           }));
           setReviews([...dynamic, ...kworkReviews]);
         }
-      } catch {
-        // Fallback to static Kwork reviews
+      } catch (err) {
+        console.error('[Testimonials] Appwrite load failed:', err);
       }
     };
     loadReviews();
