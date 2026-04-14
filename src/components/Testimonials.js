@@ -5,10 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { databases, DATABASE_ID, REVIEWS_COLLECTION_ID } from '../config/appwrite';
 import { Query } from 'appwrite';
 
+// ── Source badge config ──────────────────────────────────────────────────────
+const SOURCE_CONFIG = {
+  Kwork:     { label: 'Kwork',     bg: 'bg-green-500',  letter: 'K', color: 'text-white' },
+  Upwork:    { label: 'Upwork',    bg: 'bg-green-700',  letter: 'U', color: 'text-white' },
+  Instagram: { label: 'Instagram', bg: 'bg-gradient-to-br from-pink-500 to-purple-600', letter: '📸', color: 'text-white' },
+  'Жизнь':     { label: 'Реальный клиент', bg: 'bg-blue-500', letter: '🤝', color: 'text-white' },
+  Другое:    { label: 'Отзыв',       bg: 'bg-gray-500',  letter: '💬', color: 'text-white' },
+};
+
 const kworkReviews = [
   {
     username: 'm-uchet',
     project: 'Web DEV',
+    source: 'Kwork',
     content: 'Благодарю исполнителя за выполненную работу! Заказ по верстке был выполнен раньше оговоренного срока, все правки учли и моментально исправили, ребята профи — всем рекомендую!',
     rating: 5,
     initials: 'M',
@@ -17,6 +27,7 @@ const kworkReviews = [
   {
     username: 'pulsar197',
     project: 'Script',
+    source: 'Kwork',
     content: 'Задача была выполнена сверх оперативно! Очень рекомендую данного исполнителя. Сам буду обращаться к нему еще.',
     rating: 5,
     initials: 'P',
@@ -25,7 +36,8 @@ const kworkReviews = [
   {
     username: 'kuzhbalov96',
     project: 'Разработка Telegram-бота на Alogram с PostgreSQL',
-    content: 'Отличная работа! Исполнитель Montech проявил себя как настоящий профессионал. Задача по разработке Telegram-бота была выполнена качественно и в соответствии с техническим заданием. Все ключевые функции, включая управление ролями и систему квот, реализованы безупречно. Проект сдан в срок, код передан в репозиторий со всей необходимой документацией. Очень доволен результатом, однозначно.',
+    source: 'Kwork',
+    content: 'Отличная работа! Исполнитель Montech проявил себя как настоящий профессионал. Задача по разработке Telegram-бота была выполнена качественно и в соответствии с ТЗ. Все ключевые функции, включая управление ролями и систему квот, реализованы безупречно.',
     rating: 5,
     initials: 'K',
     color: 'from-green-500 to-green-600',
@@ -33,7 +45,8 @@ const kworkReviews = [
   {
     username: 'vladimirkotaev8',
     project: 'Скрипт',
-    content: 'Ребята выполнили работу в кратчайшие сроки, спасибо им большое! Отвечают очень быстро из-за чего очень просто коммуницировать и работа, в следствии чего идет очень быстро. Советую!',
+    source: 'Kwork',
+    content: 'Ребята выполнили работу в кратчайшие сроки, спасибо им большое! Отвечают очень быстро из-за чего очень просто коммуницировать и работа, в следствие чего идет очень быстро. Советую!',
     rating: 5,
     initials: 'V',
     color: 'from-purple-500 to-purple-600',
@@ -73,11 +86,12 @@ const Testimonials = () => {
         if (res.documents.length > 0) {
           const dynamic = res.documents.map((doc) => ({
             username: doc.reviewerUsername,
-            project: doc.relatedProject,
-            content: doc.reviewContent,
-            rating: doc.reviewRating || 5,
+            project:  doc.relatedProject,
+            content:  doc.reviewContent,
+            rating:   doc.reviewRating || 5,
+            source:   doc.source || 'Kwork',
             initials: (doc.reviewerUsername || 'U')[0].toUpperCase(),
-            color: 'from-primary-500 to-purple-600',
+            color:    'from-primary-500 to-purple-600',
           }));
           setReviews([...dynamic, ...kworkReviews]);
         }
@@ -187,14 +201,27 @@ const Testimonials = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900">@{review.username}</h4>
+                    {/* Source Badge */}
                     <div className="flex items-center gap-1.5 mt-1">
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-green-400 to-green-500 flex items-center justify-center">
-                        <span className="text-white text-[9px] font-bold">K</span>
-                      </div>
-                      <span className="text-sm text-gray-500">Kwork · {t('reviews.verifiedBuyer')}</span>
+                      {(() => {
+                        const src = SOURCE_CONFIG[review.source] || SOURCE_CONFIG['Kwork'];
+                        const isEmoji = src.letter.length > 1;
+                        return (
+                          <>
+                            <div className={`w-4 h-4 rounded-full ${src.bg} flex items-center justify-center shrink-0`}>
+                              {isEmoji
+                                ? <span className="text-[9px]">{src.letter}</span>
+                                : <span className="text-white text-[9px] font-bold">{src.letter}</span>
+                              }
+                            </div>
+                            <span className="text-sm text-gray-500">{src.label} · {t('reviews.verifiedBuyer')}</span>
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
+
               </motion.div>
             </AnimatePresence>
           </div>

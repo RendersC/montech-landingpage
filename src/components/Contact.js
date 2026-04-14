@@ -5,7 +5,7 @@ import { databases, CONTACT_COLLECTION_ID, DATABASE_ID } from '../config/appwrit
 import { ID } from 'appwrite';
 import { useTranslation } from 'react-i18next';
 
-const Contact = () => {
+const Contact = ({ onOpenLegal }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
@@ -15,6 +15,7 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
   const [submittedName, setSubmittedName] = useState('');
+  const [consentChecked, setConsentChecked] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -273,10 +274,41 @@ const Contact = () => {
                   </motion.div>
                 )}
 
+                {/* Consent Checkbox */}
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="consent"
+                    checked={consentChecked}
+                    onChange={(e) => setConsentChecked(e.target.checked)}
+                    required
+                    className="mt-1 w-4 h-4 accent-purple-600 shrink-0 cursor-pointer"
+                  />
+                  <label htmlFor="consent" className="text-xs text-gray-500 leading-relaxed cursor-pointer">
+                    {t('contact.form.consentText')}{' '}
+                    <button
+                      type="button"
+                      onClick={() => onOpenLegal && onOpenLegal('privacy')}
+                      className="text-purple-600 hover:underline font-medium"
+                    >
+                      {t('legal.privacy.linkTitle')}
+                    </button>
+                    {' '}{t('contact.form.consentAnd')}{' '}
+                    <button
+                      type="button"
+                      onClick={() => onOpenLegal && onOpenLegal('consent')}
+                      className="text-purple-600 hover:underline font-medium"
+                    >
+                      {t('legal.consent.linkTitle')}
+                    </button>
+                    .
+                  </label>
+                </div>
+
                 {/* Submit Button */}
                 <motion.button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !consentChecked}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="w-full btn-primary flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"

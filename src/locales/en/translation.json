@@ -100,7 +100,11 @@
             {"title": "AI-Powered Analytics Dashboard", "description": "Built a comprehensive analytics platform that provides real-time insights and automated reporting for business intelligence.", "results": ["Real-time data processing", "Automated reporting system", "50% faster decision making"], "category": "AI Assistant"},
             {"title": "High-Conversion Landing Page", "description": "Designed and developed a conversion-optimized landing page that increased lead generation by 250% and improved conversion rates.", "results": ["250% increase in leads", "Improved conversion rates", "Mobile-optimized design"], "category": "Landing Page"}
         ],
-        "bottomCta": {"text": "Ready to join our success stories?", "button": "Start Your Success Story"}
+        "bottomCta": {"text": "Ready to join our success stories?", "button": "Start Your Success Story"},
+        "comingSoon": {
+            "title": "Case studies coming soon",
+            "text": "We're already working on real projects. The first case studies with results will appear here very soon."
+        }
     },
     "reviews": {
         "title": {"part1": "Client", "part2": "Reviews"},
@@ -139,10 +143,55 @@
             "sending": "Sending...",
             "submit": "Send Message",
             "success": "Hi {{name}}, your response has been received!",
-            "error": "Something went wrong. Please try again or contact us directly."
+            "error": "Something went wrong. Please try again or contact us directly.",
+            "consentText": "By submitting, I agree to the",
+            "consentAnd": "and give my"
         }
     },
     "footer": {
-        "copyright": "© 2024 MonTech IT. All rights reserved."
+        "copyright": "© 2025 MonTech IT. All rights reserved."
+    },
+    "legal": {
+        "privacy": {
+            "linkTitle": "Privacy Policy",
+            "title": "Privacy Policy",
+            "updatedAt": "Last updated: April 1, 2025",
+            "sections": [
+                {"heading": "1. General provisions", "text": "This Privacy Policy governs the collection, storage, use, and protection of personal data of users of montech.kz (hereinafter — the Site), operated by MonTech IT (hereinafter — the Operator)."},
+                {"heading": "2. Data we collect", "list": ["Full name", "Email address", "Message content / project description", "Browser and device technical data (cookies, IP address)"]},
+                {"heading": "3. Purposes of processing", "list": ["Processing incoming requests and providing feedback", "Notifications about MonTech IT services", "Improving quality of the Site and services", "Fulfillment of contractual obligations"]},
+                {"heading": "4. Sharing data with third parties", "text": "The Operator does not share personal data with third parties without the user's explicit consent, except as required by applicable law."},
+                {"heading": "5. Storage and protection", "text": "We implement technical and organizational measures to protect your data from unauthorized access, modification, or destruction. Data is stored no longer than necessary to achieve the purposes of processing."},
+                {"heading": "6. User rights", "list": ["Request access to your personal data", "Request correction of inaccurate data", "Withdraw consent to data processing", "Submit a complaint to the supervisory authority"]},
+                {"heading": "7. Contact information", "text": "For questions about personal data processing: montech.kz@gmail.com"}
+            ]
+        },
+        "offer": {
+            "linkTitle": "Public Offer",
+            "title": "Public Offer (Terms of Service)",
+            "updatedAt": "Published: April 1, 2025",
+            "sections": [
+                {"heading": "1. General", "text": "This document constitutes a public offer from MonTech IT (hereinafter — the Service Provider) and contains all material terms for the provision of services in chatbot development, AI assistants, and landing page creation."},
+                {"heading": "2. Acceptance", "text": "Acceptance of this offer occurs upon submitting the contact form on the Site, or by the Client sending a message via messenger or email describing the project."},
+                {"heading": "3. Subject matter", "text": "The Service Provider agrees to develop and/or configure software (chatbots, AI assistants, websites), and the Client agrees to accept and pay for these services under the agreed terms."},
+                {"heading": "4. Pricing and payment", "text": "The cost of services is determined individually based on the Client's technical requirements and agreed upon before work begins. Payment is made as specified in the invoice or contract."},
+                {"heading": "5. Delivery timeline", "text": "Timelines for each project are agreed individually after reviewing the technical specification. The Service Provider commits to meeting agreed deadlines and will notify the Client in advance of any potential delays."},
+                {"heading": "6. Warranty", "text": "The Service Provider offers a 30-day warranty from the date of project delivery. Any identified bugs are fixed free of charge during this period."},
+                {"heading": "7. Liability", "text": "Both parties bear liability in accordance with applicable law. The Service Provider is not liable for Client losses arising from the submission of inaccurate information."},
+                {"heading": "8. Contact information", "text": "MonTech IT · montech.kz@gmail.com · @sdpazdacha (Telegram)"}
+            ]
+        },
+        "consent": {
+            "linkTitle": "Data Processing Consent",
+            "title": "Personal Data Processing Consent",
+            "updatedAt": "Date: April 1, 2025",
+            "sections": [
+                {"text": "By submitting the form on this website, I, as the data subject, freely and knowingly give my consent to MonTech IT (the Operator) to process the following personal data:"},
+                {"list": ["Full name", "Email address", "Message content / project description"]},
+                {"heading": "Purposes of processing:", "list": ["Processing my request and providing a response", "Information about MonTech IT services", "Fulfillment of contractual obligations"]},
+                {"heading": "Processing terms:", "text": "Processing begins upon form submission and continues until the stated purposes are achieved or until this consent is withdrawn. Consent may be withdrawn at any time by sending a request to montech.kz@gmail.com."},
+                {"text": "I confirm that I have read the Privacy Policy and hereby give my consent to the processing of the above personal data."}
+            ]
+        }
     }
 }
