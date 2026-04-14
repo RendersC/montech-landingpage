@@ -7,11 +7,11 @@ import { Query } from 'appwrite';
 
 // ── Source badge config ──────────────────────────────────────────────────────
 const SOURCE_CONFIG = {
-  Kwork:     { label: 'Kwork',     bg: 'bg-green-500',  letter: 'K', color: 'text-white' },
-  Upwork:    { label: 'Upwork',    bg: 'bg-green-700',  letter: 'U', color: 'text-white' },
-  Instagram: { label: 'Instagram', bg: 'bg-gradient-to-br from-pink-500 to-purple-600', letter: '📸', color: 'text-white' },
-  'Жизнь':     { label: 'Реальный клиент', bg: 'bg-blue-500', letter: '🤝', color: 'text-white' },
-  Другое:    { label: 'Отзыв',       bg: 'bg-gray-500',  letter: '💬', color: 'text-white' },
+  Kwork:     { label: 'Kwork',     bg: 'bg-green-500',   letter: 'K' },
+  Upwork:    { label: 'Upwork',    bg: 'bg-green-700',   letter: 'U' },
+  Instagram: { label: 'Instagram', bg: 'bg-gradient-to-br from-pink-500 to-purple-600', letter: '📸' },
+  'Жизнь':     { label: 'Global',     bg: 'bg-blue-500',    letter: '🌐' },
+  Другое:    { label: 'Global',     bg: 'bg-gray-500',    letter: '🌐' },
 };
 
 const kworkReviews = [
@@ -137,13 +137,21 @@ const Testimonials = () => {
             {t('reviews.subtitle')}
           </p>
 
-          {/* Kwork badge */}
-          <div className="mt-6 inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm">
-            <div className="w-5 h-5 rounded-full bg-gradient-to-r from-green-400 to-green-500 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">K</span>
-            </div>
-            <span className="text-sm font-medium text-gray-700">{t('reviews.kworkBadge')}</span>
-            <ExternalLink size={13} className="text-gray-400" />
+          {/* Platform badges */}
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            {[
+              { bg: 'from-green-400 to-green-500', letter: 'K', label: 'Kwork' },
+              { bg: 'from-green-600 to-green-700', letter: 'U', label: 'Upwork' },
+              { bg: 'from-pink-500 to-purple-600', letter: '📸', label: 'Instagram' },
+              { bg: 'from-blue-400 to-blue-600',   letter: '🌐', label: 'Global' },
+            ].map((p) => (
+              <div key={p.label} className="inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
+                <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${p.bg} flex items-center justify-center shrink-0`}>
+                  <span className="text-white text-[9px] font-bold leading-none">{p.letter}</span>
+                </div>
+                <span className="text-xs font-medium text-gray-700">{p.label}</span>
+              </div>
+            ))}
           </div>
         </motion.div>
 
