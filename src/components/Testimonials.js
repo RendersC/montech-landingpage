@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Star, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { databases, DATABASE_ID, REVIEWS_COLLECTION_ID } from '../config/appwrite';
 import { Query } from 'appwrite';
