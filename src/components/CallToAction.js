@@ -1,116 +1,289 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Zap, Target, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import MagneticButton from './MagneticButton';
+
+const BENEFITS = [
+  { Icon: Zap,        titleKey: 'cta.benefits.fast.title'     },
+  { Icon: Target,     titleKey: 'cta.benefits.results.title'  },
+  { Icon: TrendingUp, titleKey: 'cta.benefits.scalable.title' },
+];
 
 const CallToAction = () => {
   const { t } = useTranslation();
-  const scrollToContact = () => {
-    const element = document.getElementById('contact');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const sectionRef = useRef(null);
+  const scrollToContact = () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+
+  /* Parallax of the giant background diamond */
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+  const diamondY = useTransform(scrollYProgress, [0, 1], ['10%', '-10%']);
+  const diamondR = useTransform(scrollYProgress, [0, 1], ['35deg', '55deg']);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-primary-600 via-purple-600 to-purple-700 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-white/5 rounded-full blur-3xl"></div>
-      </div>
+    <section
+      ref={sectionRef}
+      style={{
+        position:   'relative',
+        padding:    '8rem 0 7rem',
+        overflow:   'hidden',
+        background: `
+          linear-gradient(180deg,
+            var(--c-bg)    0%,
+            #021a35       30%,
+            #022240       65%,
+            var(--c-bg)  100%
+          )
+        `,
+      }}
+    >
+      {/* ── Top diagonal cut ───────────────────────────────────────────── */}
+      <svg
+        viewBox="0 0 1440 60"
+        preserveAspectRatio="none"
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 60, pointerEvents: 'none' }}
+      >
+        <polygon points="0,60 1440,0 1440,30 0,60" fill="var(--c-bg)" />
+      </svg>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-4xl mx-auto"
+      {/* ── Bottom diagonal cut ────────────────────────────────────────── */}
+      <svg
+        viewBox="0 0 1440 60"
+        preserveAspectRatio="none"
+        style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 60, pointerEvents: 'none' }}
+      >
+        <polygon points="0,0 1440,30 1440,60 0,60" fill="var(--c-bg)" />
+      </svg>
+
+      {/* ── Massive parallax diamond on the right ─────────────────────── */}
+      <motion.div
+        aria-hidden
+        className="diamond-clip"
+        style={{
+          position:   'absolute',
+          top:        '50%',
+          right:      '-12%',
+          width:      'min(680px, 70vw)',
+          height:     'min(680px, 70vw)',
+          background: 'transparent',
+          outline:    '1px solid rgba(79,195,195,0.22)',
+          y:          diamondY,
+          rotate:     diamondR,
+          pointerEvents: 'none',
+        }}
+      />
+      <motion.div
+        aria-hidden
+        className="diamond-clip"
+        style={{
+          position:   'absolute',
+          top:        '50%',
+          right:      '-8%',
+          width:      'min(520px, 55vw)',
+          height:     'min(520px, 55vw)',
+          background: 'transparent',
+          outline:    '1px solid rgba(232,75,58,0.18)',
+          y:          diamondY,
+          rotate:     diamondR,
+          marginTop:  '-20%',
+          pointerEvents: 'none',
+        }}
+      />
+      <motion.div
+        aria-hidden
+        className="diamond-clip"
+        style={{
+          position:   'absolute',
+          top:        '50%',
+          right:      '0%',
+          width:      'min(360px, 40vw)',
+          height:     'min(360px, 40vw)',
+          background: 'radial-gradient(circle, rgba(79,195,195,0.18) 0%, transparent 65%)',
+          y:          diamondY,
+          rotate:     diamondR,
+          marginTop:  '-15%',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* ── Spotlight glow on the left ───────────────────────────────── */}
+      <div
+        style={{
+          position:   'absolute',
+          top:        '20%',
+          left:       '-10%',
+          width:      560,
+          height:     560,
+          background: 'radial-gradient(circle, rgba(45,95,93,0.22) 0%, transparent 65%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* ── Subtle grid mask ──────────────────────────────────────────── */}
+      <div
+        style={{
+          position: 'absolute',
+          inset:    0,
+          opacity:  0.04,
+          backgroundImage: `
+            linear-gradient(rgba(79,195,195,1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(79,195,195,1) 1px, transparent 1px)
+          `,
+          backgroundSize:  '90px 90px',
+          maskImage:        'linear-gradient(135deg, transparent 30%, black 80%)',
+          WebkitMaskImage:  'linear-gradient(135deg, transparent 30%, black 80%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* ── Content ───────────────────────────────────────────────────── */}
+      <div className="container mx-auto px-6 lg:px-12 relative" style={{ zIndex: 2 }}>
+        <div
+          style={{
+            maxWidth: 1120,
+            display:  'grid',
+            gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 0.6fr)',
+            gap:      '3rem',
+            alignItems: 'end',
+          }}
+          className="cta-grid"
         >
-          {/* Main CTA */}
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            {t('cta.title')}
-          </h2>
-          
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-            {t('cta.subtitle')}
-          </p>
-
-          {/* CTA Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={scrollToContact}
-            className="bg-white text-primary-600 hover:bg-gray-100 font-bold py-4 px-10 rounded-xl text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 mb-12"
-          >
-            {t('getAQuote')}
-            <ArrowRight className="ml-2 inline-block" size={20} />
-          </motion.button>
-
-          {/* Benefits Grid */}
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-center"
-            >
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="text-white" size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">{t('cta.benefits.fast.title')}</h3>
-              <p className="text-white/80">{t('cta.benefits.fast.text')}</p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-center"
-            >
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Target className="text-white" size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">{t('cta.benefits.results.title')}</h3>
-              <p className="text-white/80">{t('cta.benefits.results.text')}</p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-center"
-            >
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="text-white" size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">{t('cta.benefits.scalable.title')}</h3>
-              <p className="text-white/80">{t('cta.benefits.scalable.text')}</p>
-            </motion.div>
-          </div>
-
-          {/* Trust Indicators */}
+          {/* ── Left: editorial typography ──────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-16 pt-8 border-t border-white/20"
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className="text-white/70 text-sm mb-4">{t('cta.trusted')}</p>
-            <div className="flex justify-center items-center space-x-8 opacity-60">
-              <div className="text-white/50 text-lg font-semibold">TechStore Pro</div>
-              <div className="text-white/50 text-lg font-semibold">DataFlow Solutions</div>
-              <div className="text-white/50 text-lg font-semibold">GrowthStart Inc</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
+              <div className="diamond-clip" style={{ width: 8, height: 8, background: 'var(--c-accent)' }} />
+              <span className="section-eyebrow">{t('cta.eyebrow') !== 'cta.eyebrow' ? t('cta.eyebrow') : 'Final Step'}</span>
+              <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, rgba(79,195,195,0.5), transparent)', maxWidth: 260 }} />
+            </div>
+
+            <h2
+              className="display-title"
+              style={{
+                fontSize:     'clamp(2.8rem, 7vw, 6rem)',
+                color:        'white',
+                marginBottom: '2rem',
+                wordBreak:    'keep-all',
+                overflowWrap: 'normal',
+              }}
+            >
+              {t('cta.title')}
+            </h2>
+
+            <p
+              style={{
+                color:        'var(--c-text-2)',
+                fontSize:     '1.05rem',
+                lineHeight:   1.72,
+                marginBottom: '2.75rem',
+                maxWidth:     520,
+                fontWeight:   300,
+              }}
+            >
+              {t('cta.subtitle')}
+            </p>
+
+            <div
+              style={{
+                display:    'flex',
+                flexWrap:   'wrap',
+                alignItems: 'center',
+                gap:        '2rem',
+              }}
+            >
+              <MagneticButton strength={22} className="btn-primary" onClick={scrollToContact}>
+                {t('getAQuote')}
+                <ArrowRight size={15} />
+              </MagneticButton>
+
+              {/* Inline benefits — single row */}
+              <ul
+                style={{
+                  display:    'flex',
+                  flexWrap:   'wrap',
+                  gap:        '1.5rem',
+                  listStyle:  'none',
+                  padding:    0,
+                  margin:     0,
+                }}
+              >
+                {BENEFITS.map(({ Icon, titleKey }, i) => (
+                  <li
+                    key={titleKey}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--c-text-3)', fontSize: '0.78rem', letterSpacing: '0.06em' }}
+                  >
+                    <Icon size={14} style={{ color: 'var(--c-accent)' }} />
+                    <span>{t(titleKey)}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </motion.div>
-        </motion.div>
+
+          {/* ── Right: editorial number/marker ────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, x: 28 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="cta-marker"
+            style={{
+              position:    'relative',
+              display:     'flex',
+              flexDirection: 'column',
+              alignItems:  'flex-end',
+              gap:         12,
+              paddingBottom: 12,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: '0.68rem', letterSpacing: '0.3em', color: 'var(--c-text-3)', textTransform: 'uppercase' }}>
+                Step
+              </span>
+              <div style={{ width: 28, height: 1, background: 'var(--c-accent)' }} />
+            </div>
+
+            <div
+              className="display-title"
+              style={{
+                fontSize:      'clamp(7rem, 15vw, 14rem)',
+                lineHeight:    0.85,
+                letterSpacing: '-0.05em',
+                background:    'linear-gradient(135deg, rgba(79,195,195,0.6) 0%, rgba(79,195,195,0.1) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor:  'transparent',
+                backgroundClip:        'text',
+              }}
+            >
+              04
+            </div>
+
+            <div
+              className="diamond-clip"
+              style={{
+                width:      24,
+                height:     24,
+                background: 'transparent',
+                outline:    '1px solid var(--c-accent)',
+              }}
+            />
+          </motion.div>
+        </div>
       </div>
+
+      <style>{`
+        @media (max-width: 800px) {
+          .cta-grid { grid-template-columns: 1fr !important; }
+          .cta-marker { align-items: flex-start !important; }
+        }
+      `}</style>
     </section>
   );
 };

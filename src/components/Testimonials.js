@@ -120,7 +120,7 @@ const Testimonials = () => {
   const review = reviews[currentIndex] || reviews[0];
 
   return (
-    <section id="reviews" className="py-20 gradient-bg">
+    <section id="reviews" style={{ background: 'var(--c-bg)', padding: '5rem 0' }}>
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
@@ -130,10 +130,10 @@ const Testimonials = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="display-title text-white mb-6" style={{ fontSize: 'clamp(2.4rem, 6vw, 4.5rem)' }}>
             {t('reviews.title.part1')} <span className="gradient-text">{t('reviews.title.part2')}</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg max-w-3xl mx-auto" style={{ color: 'var(--c-text-2)' }}>
             {t('reviews.subtitle')}
           </p>
 
@@ -145,11 +145,11 @@ const Testimonials = () => {
               { bg: 'from-pink-500 to-purple-600', letter: '📸', label: 'Instagram' },
               { bg: 'from-blue-400 to-blue-600',   letter: '🌐', label: 'Global' },
             ].map((p) => (
-              <div key={p.label} className="inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
+              <div key={p.label} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${p.bg} flex items-center justify-center shrink-0`}>
                   <span className="text-white text-[9px] font-bold leading-none">{p.letter}</span>
                 </div>
-                <span className="text-xs font-medium text-gray-700">{p.label}</span>
+                <span className="text-xs font-medium" style={{ color: 'var(--c-text-2)' }}>{p.label}</span>
               </div>
             ))}
           </div>
@@ -160,16 +160,18 @@ const Testimonials = () => {
           {/* Navigation Buttons */}
           <button
             onClick={prevTestimonial}
-            className="absolute left-0 md:-left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
+            className="absolute left-0 md:-left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center transition-colors duration-200"
+            style={{ background: 'var(--c-surface-2)', border: '1px solid var(--c-border-2)', borderRadius: 0 }}
           >
-            <ChevronLeft className="text-gray-600" size={24} />
+            <ChevronLeft size={22} style={{ color: 'var(--c-text-2)' }} />
           </button>
 
           <button
             onClick={nextTestimonial}
-            className="absolute right-0 md:-right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
+            className="absolute right-0 md:-right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center transition-colors duration-200"
+            style={{ background: 'var(--c-surface-2)', border: '1px solid var(--c-border-2)', borderRadius: 0 }}
           >
-            <ChevronRight className="text-gray-600" size={24} />
+            <ChevronRight size={22} style={{ color: 'var(--c-text-2)' }} />
           </button>
 
           {/* Testimonial Content */}
@@ -181,11 +183,11 @@ const Testimonials = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.4, ease: 'easeInOut' }}
-                className="bg-white rounded-2xl p-8 md:p-12 shadow-xl"
+                className="dark-card p-8 md:p-12"
               >
                 {/* Project type label */}
                 <div className="flex justify-center mb-6">
-                  <span className="bg-primary-50 text-primary-700 text-sm font-semibold px-4 py-1.5 rounded-full border border-primary-100">
+                  <span className="text-sm font-semibold px-4 py-1.5" style={{ background: 'rgba(79,195,195,0.1)', color: 'var(--c-accent)', border: '1px solid rgba(79,195,195,0.2)' }}>
                     {review.project}
                   </span>
                 </div>
@@ -198,7 +200,7 @@ const Testimonials = () => {
                 </div>
 
                 {/* Review Text */}
-                <p className="text-lg md:text-xl text-gray-700 text-center mb-8 leading-relaxed">
+                <p className="text-lg md:text-xl text-center mb-8 leading-relaxed" style={{ color: 'var(--c-text-2)' }}>
                   «{review.content}»
                 </p>
 
@@ -208,7 +210,7 @@ const Testimonials = () => {
                     {review.initials}
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900">@{review.username}</h4>
+                    <h4 className="font-bold" style={{ color: 'white' }}>@{review.username}</h4>
                     {/* Source Badge */}
                     <div className="flex items-center gap-1.5 mt-1">
                       {(() => {
@@ -222,7 +224,7 @@ const Testimonials = () => {
                                 : <span className="text-white text-[9px] font-bold">{src.letter}</span>
                               }
                             </div>
-                            <span className="text-sm text-gray-500">{src.label} · {t('reviews.verifiedBuyer')}</span>
+                            <span className="text-sm" style={{ color: 'var(--c-text-3)' }}>{src.label} · {t('reviews.verifiedBuyer')}</span>
                           </>
                         );
                       })()}
@@ -240,11 +242,12 @@ const Testimonials = () => {
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? 'bg-primary-600 w-8'
-                    : 'bg-gray-300 hover:bg-gray-400 w-3'
-                }`}
+                style={{
+                  height: 3, width: index === currentIndex ? 24 : 6,
+                  background: index === currentIndex ? 'var(--c-accent)' : 'rgba(255,255,255,0.15)',
+                  border: 'none', cursor: 'pointer', transition: 'all 0.3s ease',
+                  padding: 0,
+                }}
               />
             ))}
           </div>
@@ -256,24 +259,19 @@ const Testimonials = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
+          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px text-center" style={{ background: 'var(--c-border)' }}
         >
-          <div className="space-y-2">
-            <div className="text-3xl md:text-4xl font-bold gradient-text">98%</div>
-            <div className="text-gray-600 font-medium">{t('reviews.stats.satisfaction')}</div>
-          </div>
-          <div className="space-y-2">
-            <div className="text-3xl md:text-4xl font-bold gradient-text">5.0/5</div>
-            <div className="text-gray-600 font-medium">{t('reviews.stats.average')}</div>
-          </div>
-          <div className="space-y-2">
-            <div className="text-3xl md:text-4xl font-bold gradient-text">50+</div>
-            <div className="text-gray-600 font-medium">{t('reviews.stats.clients')}</div>
-          </div>
-          <div className="space-y-2">
-            <div className="text-3xl md:text-4xl font-bold gradient-text">100%</div>
-            <div className="text-gray-600 font-medium">{t('reviews.stats.success')}</div>
-          </div>
+          {[
+            { val: '98%',   key: 'satisfaction' },
+            { val: '5.0/5', key: 'average'      },
+            { val: '50+',   key: 'clients'      },
+            { val: '100%',  key: 'success'      },
+          ].map(({ val, key }) => (
+            <div key={key} style={{ background: 'var(--c-surface)', padding: '1.5rem' }}>
+              <div className="display-title gradient-text" style={{ fontSize: '2.2rem', marginBottom: 6 }}>{val}</div>
+              <div style={{ color: 'var(--c-text-3)', fontSize: '0.72rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{t(`reviews.stats.${key}`)}</div>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>

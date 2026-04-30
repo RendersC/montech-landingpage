@@ -45,22 +45,22 @@ const CaseModal = ({ caseData, onClose }) => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 30 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden"
+          style={{ background: 'var(--c-surface-2)', border: '1px solid var(--c-border-2)', borderRadius: 2, width: '100%', maxWidth: '768px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
         >
           {/* Header */}
-          <div className="flex items-start justify-between px-8 py-5 border-b border-gray-100 shrink-0">
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '1.5rem 2rem', borderBottom: '1px solid var(--c-border)', flexShrink: 0 }}>
             <div>
-              <span className="inline-block bg-primary-100 text-primary-700 text-xs font-semibold px-3 py-1 rounded-full mb-2">
+              <span style={{ display: 'inline-block', background: 'rgba(79,195,195,0.1)', color: 'var(--c-accent)', fontSize: '0.7rem', fontWeight: 600, padding: '3px 10px', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>
                 {caseData.category}
               </span>
-              <h2 className="text-2xl font-bold text-gray-900">{caseData.title}</h2>
-              {caseData.company && <p className="text-sm text-primary-600 font-medium mt-1">{caseData.company}</p>}
+              <h2 className="display-title" style={{ fontSize: '1.8rem', color: 'white' }}>{caseData.title}</h2>
+              {caseData.company && <p style={{ fontSize: '0.85rem', color: 'var(--c-accent)', marginTop: 4 }}>{caseData.company}</p>}
             </div>
             <button
               onClick={onClose}
-              className="ml-4 mt-1 w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500 hover:text-gray-800 shrink-0"
+              style={{ marginLeft: 16, marginTop: 4, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.06)', border: 'none', cursor: 'pointer', color: 'var(--c-text-2)', flexShrink: 0 }}
             >
-              <X className="w-5 h-5" />
+              <X size={16} />
             </button>
           </div>
 
@@ -225,7 +225,7 @@ const CaseStudies = () => {
   };
 
   return (
-    <section id="cases" className="py-20 bg-white">
+    <section id="cases" style={{ background: 'var(--c-surface)', padding: '6rem 0' }}>
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -233,23 +233,23 @@ const CaseStudies = () => {
           viewport={{ once: true }} transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="display-title text-white mb-6" style={{ fontSize: 'clamp(2.4rem, 6vw, 4.5rem)' }}>
             {t('cases.title.part1')} <span className="gradient-text">{t('cases.title.part2')}</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">{t('cases.subtitle')}</p>
+          <p className="text-lg max-w-3xl mx-auto" style={{ color: 'var(--c-text-2)' }}>{t('cases.subtitle')}</p>
         </motion.div>
 
         {/* Loading Skeleton */}
         {loading && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: 'var(--c-border)' }}>
             {[0, 1, 2].map((i) => (
-              <div key={i} className="card overflow-hidden animate-pulse">
-                <div className="h-48 bg-gray-200" />
+              <div key={i} className="animate-pulse" style={{ background: 'var(--c-surface-2)' }}>
+                <div className="h-48" style={{ background: 'rgba(255,255,255,0.04)' }} />
                 <div className="p-6 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-1/3" />
-                  <div className="h-6 bg-gray-200 rounded w-3/4" />
-                  <div className="h-4 bg-gray-200 rounded" />
-                  <div className="h-4 bg-gray-200 rounded w-5/6" />
+                  <div className="h-3 rounded w-1/3" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                  <div className="h-5 rounded w-3/4" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                  <div className="h-3 rounded"       style={{ background: 'rgba(255,255,255,0.04)' }} />
+                  <div className="h-3 rounded w-5/6" style={{ background: 'rgba(255,255,255,0.04)' }} />
                 </div>
               </div>
             ))}
@@ -263,11 +263,14 @@ const CaseStudies = () => {
             transition={{ duration: 0.6 }}
             className="flex flex-col items-center justify-center py-20 text-center"
           >
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-100 to-purple-100 flex items-center justify-center mb-6 shadow-inner">
-              <Clock className="w-10 h-10 text-primary-500" />
+            <div
+              className="diamond-clip flex items-center justify-center mb-6"
+              style={{ width: 72, height: 72, background: 'rgba(79,195,195,0.1)' }}
+            >
+              <Clock style={{ color: 'var(--c-accent)' }} size={28} />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('cases.comingSoon.title')}</h3>
-            <p className="text-gray-500 max-w-md">{t('cases.comingSoon.text')}</p>
+            <h3 className="display-title text-white mb-3" style={{ fontSize: '1.8rem' }}>{t('cases.comingSoon.title')}</h3>
+            <p style={{ color: 'var(--c-text-2)', maxWidth: 400 }}>{t('cases.comingSoon.text')}</p>
           </motion.div>
         )}
 
@@ -276,14 +279,14 @@ const CaseStudies = () => {
           <motion.div
             variants={containerVariants} initial="hidden"
             whileInView="visible" viewport={{ once: true }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 1, background: 'var(--c-border)' }}
           >
             {cases.map((study, index) => (
               <motion.div
                 key={study.id || index}
                 variants={cardVariants}
                 whileHover={{ y: -10 }}
-                className="card overflow-hidden group cursor-pointer"
+                className="dark-card group cursor-pointer overflow-hidden"
                 onClick={() => setSelected(study)}
               >
                 {/* Image */}
@@ -295,7 +298,7 @@ const CaseStudies = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <span style={{ background: 'rgba(79,195,195,0.85)', color: 'white', padding: '3px 10px', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                       {study.category}
                     </span>
                   </div>
@@ -308,25 +311,25 @@ const CaseStudies = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
+                <div style={{ padding: '1.5rem' }}>
                   {study.company && (
-                    <p className="text-sm text-primary-600 font-semibold mb-2">{study.company}</p>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--c-accent)', fontWeight: 600, marginBottom: 8, letterSpacing: '0.06em' }}>{study.company}</p>
                   )}
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-200">
+                  <h3 className="display-title text-white mb-3" style={{ fontSize: '1.3rem' }}>
                     {study.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed line-clamp-2">{study.description}</p>
-                  <div className="space-y-2 mb-4">
+                  <p style={{ color: 'var(--c-text-2)', marginBottom: '1rem', lineHeight: 1.7, fontSize: '0.85rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{study.description}</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: '1rem' }}>
                     {study.results.map((result, ri) => (
-                      <div key={ri} className="flex items-center text-sm text-gray-600">
-                        <TrendingUp className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                      <div key={ri} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8rem', color: 'var(--c-text-3)' }}>
+                        <div className="diamond-clip" style={{ width: 7, height: 7, background: 'var(--c-accent)', flexShrink: 0 }} />
                         {result}
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center text-primary-600 font-semibold text-sm group-hover:text-primary-700 transition-colors">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--c-accent)', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
                     {t('cases.viewButton')}
-                    <ZoomIn className="ml-2 w-4 h-4" />
+                    <ZoomIn size={13} />
                   </div>
                 </div>
               </motion.div>
@@ -340,14 +343,13 @@ const CaseStudies = () => {
           viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}
           className="text-center mt-16"
         >
-          <p className="text-lg text-gray-600 mb-6">{t('cases.bottomCta.text')}</p>
-          <motion.button
-            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-            onClick={() => { document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }); }}
+          <p style={{ color: 'var(--c-text-2)', marginBottom: '1.25rem', fontSize: '0.9rem' }}>{t('cases.bottomCta.text')}</p>
+          <button
             className="btn-primary"
+            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
           >
             {t('cases.bottomCta.button')}
-          </motion.button>
+          </button>
         </motion.div>
       </div>
 

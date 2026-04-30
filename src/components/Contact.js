@@ -1,68 +1,72 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Mail, MessageCircle, Phone, CheckCircle, AlertCircle } from 'lucide-react';
+import { Send, Mail, MessageCircle, Phone, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
 import { databases, CONTACT_COLLECTION_ID, DATABASE_ID } from '../config/appwrite';
 import { ID } from 'appwrite';
 import { useTranslation } from 'react-i18next';
 
+/* ── Input + Textarea shared styles ───────────────────────────────────────── */
+const inputStyle = {
+  width:          '100%',
+  padding:        '12px 16px',
+  background:     'rgba(255,255,255,0.04)',
+  border:         '1px solid rgba(255,255,255,0.1)',
+  color:          'white',
+  fontFamily:     'Outfit, sans-serif',
+  fontSize:       '0.9rem',
+  outline:        'none',
+  transition:     'border-color 0.25s ease',
+};
+
+const labelStyle = {
+  display:       'block',
+  marginBottom:  6,
+  fontSize:      '0.72rem',
+  fontWeight:    500,
+  letterSpacing: '0.14em',
+  textTransform: 'uppercase',
+  color:         'var(--c-text-3)',
+};
+
 const Contact = ({ onOpenLegal }) => {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
-  const [submittedName, setSubmittedName] = useState('');
+  const [formData,       setFormData]       = useState({ name: '', email: '', message: '' });
+  const [isSubmitting,   setIsSubmitting]   = useState(false);
+  const [submitStatus,   setSubmitStatus]   = useState(null);
+  const [submittedName,  setSubmittedName]  = useState('');
   const [consentChecked, setConsentChecked] = useState(false);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const sendToTelegram = async (name, email, message) => {
     const BOT_TOKEN = '8631734357:AAEWTyh_iE5zc4N-TVL-1sAgXwHd_dVSpps';
-    const CHAT_ID = '1555289492';
+    const CHAT_ID   = '1555289492';
     const text = `🔔 *Новая заявка с сайта SteppeDev*\n\n👤 *Имя:* ${name}\n📧 *Email:* ${email}\n\n💬 *Сообщение:*\n${message}`;
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'Markdown' }),
+      body:    JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'Markdown' }),
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus(null);
-
     try {
-      // Save to Appwrite
-      await databases.createDocument(
-        DATABASE_ID,
-        CONTACT_COLLECTION_ID,
-        ID.unique(),
-        {
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-        }
-      );
-
-      // Send notification to Telegram
+      await databases.createDocument(DATABASE_ID, CONTACT_COLLECTION_ID, ID.unique(), {
+        name:    formData.name,
+        email:   formData.email,
+        message: formData.message,
+      });
       await sendToTelegram(formData.name, formData.email, formData.message);
-
       setSubmitStatus('success');
       setSubmittedName(formData.name);
       setFormData({ name: '', email: '', message: '' });
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      // Still try Telegram even if Appwrite fails
+    } catch {
       try {
         await sendToTelegram(formData.name, formData.email, formData.message);
         setSubmitStatus('success');
@@ -75,261 +79,307 @@ const Contact = ({ onOpenLegal }) => {
       setIsSubmitting(false);
     }
   };
-  
 
-  const openTelegram = () => {
-    window.open('https://t.me/sdpazdacha', '_blank');
-  };
+  const openTelegram  = () => window.open('https://t.me/sdpazdacha', '_blank');
+  const openWhatsApp  = () => window.open('https://wa.me/77086570811?text=Привет%20SteppeDev,%20я%20хотел%20бы%20обсудить%20проект.', '_blank');
+  const openEmail     = () => window.open('mailto:steppedev@gmail.com?subject=Project%20Inquiry', '_blank');
 
-  const openWhatsApp = () => {
-    window.open('https://wa.me/77086570811?text=Привет%20SteppeDev,%20я%20хотел%20бы%20обсудить%20проект.', '_blank');
-  };
-
-  const openEmail = () => {
-    window.open('mailto:steppedev@gmail.com?subject=Project%20Inquiry', '_blank');
-  };
+  /* ── Channel button ──────────────────────────────────────────────────────── */
+  const ChannelBtn = ({ onClick, icon: Icon, label, bg }) => (
+    <motion.button
+      whileHover={{ x: 4 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      style={{
+        display:     'flex',
+        alignItems:  'center',
+        gap:         12,
+        width:       '100%',
+        padding:     '14px 18px',
+        background:  'transparent',
+        border:      '1px solid var(--c-border-2)',
+        cursor:      'pointer',
+        transition:  'all 0.25s ease',
+        color:       'var(--c-text-2)',
+        fontFamily:  'Outfit, sans-serif',
+        fontSize:    '0.85rem',
+        fontWeight:  500,
+        position:    'relative',
+        overflow:    'hidden',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(79,195,195,0.35)'; e.currentTarget.style.color = 'white'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--c-border-2)';     e.currentTarget.style.color = 'var(--c-text-2)'; }}
+    >
+      <div
+        className="diamond-clip"
+        style={{ width: 34, height: 34, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+      >
+        <Icon size={15} color="white" />
+      </div>
+      {label}
+      <ArrowRight size={14} style={{ marginLeft: 'auto', opacity: 0.5 }} />
+    </motion.button>
+  );
 
   return (
-    <section id="contact" className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
+    <section id="contact" style={{ background: 'var(--c-bg)', padding: '6rem 0', position: 'relative' }}>
+      {/* Corner diamond decoration */}
+      <div
+        className="diamond-clip"
+        style={{
+          position:   'absolute',
+          top:        -80,
+          left:       -80,
+          width:      260,
+          height:     260,
+          background: 'radial-gradient(circle, rgba(38,80,119,0.12) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div className="container mx-auto px-6 lg:px-12 relative" style={{ zIndex: 1 }}>
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.7 }}
+          style={{ marginBottom: '3.5rem' }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            {t('contact.title.part1')} <span className="gradient-text">{t('contact.title.part2')}</span>
+          <span className="section-eyebrow" style={{ marginBottom: 12 }}>
+            {t('contact.title.part1')}
+          </span>
+          <h2
+            className="display-title"
+            style={{ fontSize: 'clamp(2.6rem, 6.5vw, 5rem)', color: 'white', maxWidth: 560 }}
+          >
+            {t('contact.title.part2')}
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p style={{ color: 'var(--c-text-2)', marginTop: '1.2rem', maxWidth: 480, lineHeight: 1.72, fontSize: '0.9rem' }}>
             {t('contact.subtitle')}
           </p>
         </motion.div>
 
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Contact Information */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="space-y-8"
+        {/* Two-column grid with gap-px separator */}
+        <div
+          style={{
+            display:   'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap:       1,
+            background: 'var(--c-border)',
+          }}
+        >
+          {/* ── Left: channels + benefits ─────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, x: -24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{ background: 'var(--c-surface)', padding: '2.5rem' }}
+          >
+            <h3
+              className="display-title"
+              style={{ fontSize: '1.5rem', color: 'white', marginBottom: '1.5rem' }}
             >
+              {t('contact.left.title')}
+            </h3>
+            <p style={{ color: 'var(--c-text-2)', marginBottom: '2rem', lineHeight: 1.72, fontSize: '0.88rem' }}>
+              {t('contact.left.text')}
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '2rem' }}>
+              <ChannelBtn onClick={openTelegram} icon={MessageCircle} label={t('contact.methods.telegram')} bg="rgba(38,136,218,0.7)" />
+              <ChannelBtn onClick={openWhatsApp} icon={Phone}         label={t('contact.methods.whatsapp')} bg="rgba(37,211,102,0.7)" />
+              <ChannelBtn onClick={openEmail}    icon={Mail}          label={t('contact.methods.email')}    bg="rgba(79,195,195,0.6)" />
+            </div>
+
+            {/* Why box */}
+            <div style={{ background: 'rgba(79,195,195,0.04)', border: '1px solid rgba(79,195,195,0.1)', padding: '1.25rem' }}>
+              <h4
+                className="display-title"
+                style={{ fontSize: '1rem', color: 'white', marginBottom: 12 }}
+              >
+                {t('contact.why.title')}
+              </h4>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                {[0, 1, 2, 3].map(i => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, color: 'var(--c-text-2)', fontSize: '0.82rem' }}>
+                    <div className="diamond-clip" style={{ width: 8, height: 8, background: 'var(--c-accent)', flexShrink: 0, marginTop: 4 }} />
+                    {t(`contact.why.items.${i}`)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+
+          {/* ── Right: form ───────────────────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, x: 24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{ background: 'var(--c-surface-2)', padding: '2.5rem' }}
+          >
+            <h3
+              className="display-title"
+              style={{ fontSize: '1.5rem', color: 'white', marginBottom: '2rem' }}
+            >
+              {t('contact.form.title')}
+            </h3>
+
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.4rem' }}>
+              {/* Name */}
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                  {t('contact.left.title')}
-                </h3>
-                <p className="text-gray-600 mb-8 leading-relaxed">
-                  {t('contact.left.text')}
-                </p>
+                <label style={labelStyle}>{t('contact.form.nameLabel')}</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  placeholder={t('contact.form.namePlaceholder')}
+                  style={inputStyle}
+                  onFocus={e    => (e.target.style.borderColor = 'rgba(79,195,195,0.5)')}
+                  onBlur={e     => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
+                />
               </div>
 
-              {/* Contact Methods */}
-              <div className="space-y-6">
-                {/* Telegram */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={openTelegram}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 transition-colors duration-200"
-                >
-                  <MessageCircle size={24} />
-                  <span>{t('contact.methods.telegram')}</span>
-                </motion.button>
-
-                {/* WhatsApp */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={openWhatsApp}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 transition-colors duration-200"
-                >
-                  <Phone size={24} />
-                  <span>{t('contact.methods.whatsapp')}</span>
-                </motion.button>
-
-                {/* Email */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={openEmail}
-                  className="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 transition-colors duration-200"
-                >
-                  <Mail size={24} />
-                  <span>{t('contact.methods.email')}</span>
-                </motion.button>
+              {/* Email */}
+              <div>
+                <label style={labelStyle}>{t('contact.form.emailLabel')}</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  placeholder={t('contact.form.emailPlaceholder')}
+                  style={inputStyle}
+                  onFocus={e => (e.target.style.borderColor = 'rgba(79,195,195,0.5)')}
+                  onBlur={e  => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
+                />
               </div>
 
-              {/* Additional Info */}
-              <div className="bg-gradient-to-br from-primary-50 to-purple-50 p-6 rounded-xl">
-                <h4 className="font-bold text-gray-900 mb-3">{t('contact.why.title')}</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                    {t('contact.why.items.0')}
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                    {t('contact.why.items.1')}
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                    {t('contact.why.items.2')}
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                    {t('contact.why.items.3')}
-                  </li>
-                </ul>
+              {/* Message */}
+              <div>
+                <label style={labelStyle}>{t('contact.form.messageLabel')}</label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  required
+                  rows={5}
+                  placeholder={t('contact.form.messagePlaceholder')}
+                  style={{ ...inputStyle, resize: 'none' }}
+                  onFocus={e => (e.target.style.borderColor = 'rgba(79,195,195,0.5)')}
+                  onBlur={e  => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
+                />
               </div>
-            </motion.div>
 
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
-            >
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                {t('contact.form.title')}
-              </h3>
+              {/* Status */}
+              {submitStatus === 'success' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{
+                    display:    'flex',
+                    alignItems: 'center',
+                    gap:        8,
+                    padding:    '12px 16px',
+                    background: 'rgba(79,195,195,0.08)',
+                    border:     '1px solid rgba(79,195,195,0.25)',
+                    color:      'var(--c-accent)',
+                    fontSize:   '0.88rem',
+                  }}
+                >
+                  <CheckCircle size={18} />
+                  {t('contact.form.success', { name: submittedName })}
+                </motion.div>
+              )}
+              {submitStatus === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{
+                    display:    'flex',
+                    alignItems: 'center',
+                    gap:        8,
+                    padding:    '12px 16px',
+                    background: 'rgba(232,75,58,0.08)',
+                    border:     '1px solid rgba(232,75,58,0.25)',
+                    color:      '#E84B3A',
+                    fontSize:   '0.88rem',
+                  }}
+                >
+                  <AlertCircle size={18} />
+                  {t('contact.form.error')}
+                </motion.div>
+              )}
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Name Field */}
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('contact.form.nameLabel')}
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200"
-                    placeholder={t('contact.form.namePlaceholder')}
-                  />
-                </div>
-
-                {/* Email Field */}
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('contact.form.emailLabel')}
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200"
-                    placeholder={t('contact.form.emailPlaceholder')}
-                  />
-                </div>
-
-                {/* Message Field */}
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('contact.form.messageLabel')}
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    required
-                    rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200 resize-none"
-                    placeholder={t('contact.form.messagePlaceholder')}
-                  />
-                </div>
-
-                {/* Submit Status */}
-                {submitStatus === 'success' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center space-x-2 text-green-600 bg-green-50 p-4 rounded-lg"
+              {/* Consent */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <input
+                  type="checkbox"
+                  id="consent"
+                  checked={consentChecked}
+                  onChange={e => setConsentChecked(e.target.checked)}
+                  required
+                  style={{ marginTop: 3, accentColor: 'var(--c-accent)', flexShrink: 0 }}
+                />
+                <label
+                  htmlFor="consent"
+                  style={{ fontSize: '0.76rem', color: 'var(--c-text-3)', lineHeight: 1.6, cursor: 'pointer' }}
+                >
+                  {t('contact.form.consentText')}{' '}
+                  <button
+                    type="button"
+                    onClick={() => onOpenLegal?.('privacy')}
+                    style={{ background: 'none', border: 'none', color: 'var(--c-accent)', cursor: 'pointer', fontSize: 'inherit', padding: 0, textDecoration: 'underline' }}
                   >
-                    <CheckCircle size={20} />
-                    <span>{t('contact.form.success', { name: submittedName })}</span>
-                  </motion.div>
-                )}
-
-                {submitStatus === 'error' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center space-x-2 text-red-600 bg-red-50 p-4 rounded-lg"
+                    {t('legal.privacy.linkTitle')}
+                  </button>
+                  {' '}{t('contact.form.consentAnd')}{' '}
+                  <button
+                    type="button"
+                    onClick={() => onOpenLegal?.('consent')}
+                    style={{ background: 'none', border: 'none', color: 'var(--c-accent)', cursor: 'pointer', fontSize: 'inherit', padding: 0, textDecoration: 'underline' }}
                   >
-                    <AlertCircle size={20} />
-                    <span>{t('contact.form.error')}</span>
-                  </motion.div>
+                    {t('legal.consent.linkTitle')}
+                  </button>
+                  .
+                </label>
+              </div>
+
+              {/* Submit */}
+              <motion.button
+                type="submit"
+                disabled={isSubmitting || !consentChecked}
+                whileHover={{ scale: isSubmitting || !consentChecked ? 1 : 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-primary"
+                style={{ justifyContent: 'center', width: '100%' }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
+                    {t('contact.form.sending')}
+                  </>
+                ) : (
+                  <>
+                    <Send size={15} />
+                    {t('contact.form.submit')}
+                  </>
                 )}
-
-                {/* Consent Checkbox */}
-                <div className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    id="consent"
-                    checked={consentChecked}
-                    onChange={(e) => setConsentChecked(e.target.checked)}
-                    required
-                    className="mt-1 w-4 h-4 accent-purple-600 shrink-0 cursor-pointer"
-                  />
-                  <label htmlFor="consent" className="text-xs text-gray-500 leading-relaxed cursor-pointer">
-                    {t('contact.form.consentText')}{' '}
-                    <button
-                      type="button"
-                      onClick={() => onOpenLegal && onOpenLegal('privacy')}
-                      className="text-purple-600 hover:underline font-medium"
-                    >
-                      {t('legal.privacy.linkTitle')}
-                    </button>
-                    {' '}{t('contact.form.consentAnd')}{' '}
-                    <button
-                      type="button"
-                      onClick={() => onOpenLegal && onOpenLegal('consent')}
-                      className="text-purple-600 hover:underline font-medium"
-                    >
-                      {t('legal.consent.linkTitle')}
-                    </button>
-                    .
-                  </label>
-                </div>
-
-                {/* Submit Button */}
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting || !consentChecked}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full btn-primary flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>{t('contact.form.sending')}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send size={20} />
-                      <span>{t('contact.form.submit')}</span>
-                    </>
-                  )}
-                </motion.button>
-              </form>
-            </motion.div>
-          </div>
+              </motion.button>
+            </form>
+          </motion.div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.2); }
+      `}</style>
     </section>
   );
 };

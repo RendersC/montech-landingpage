@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 const ICONS = {
   privacy: Shield,
-  offer: FileText,
+  offer:   FileText,
   consent: UserCheck,
 };
 
@@ -25,8 +25,8 @@ const LegalModal = ({ type, onClose }) => {
 
   if (!type) return null;
 
-  const Icon = ICONS[type] || FileText;
-  const title = t(`legal.${type}.title`);
+  const Icon    = ICONS[type] || FileText;
+  const title   = t(`legal.${type}.title`);
   const sections = t(`legal.${type}.sections`, { returnObjects: true }) || [];
 
   return (
@@ -36,45 +36,112 @@ const LegalModal = ({ type, onClose }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+        style={{ backgroundColor: 'rgba(1,13,26,0.88)', backdropFilter: 'blur(6px)' }}
         onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.92, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.92, y: 30 }}
+          initial={{ opacity: 0, scale: 0.93, y: 28 }}
+          animate={{ opacity: 1, scale: 1,    y: 0  }}
+          exit={{ opacity: 0,   scale: 0.93, y: 28 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden"
+          style={{
+            background:  'var(--c-surface-2)',
+            border:      '1px solid var(--c-border-2)',
+            borderRadius: 2,
+            width:       '100%',
+            maxWidth:    600,
+            maxHeight:   '85vh',
+            display:     'flex',
+            flexDirection: 'column',
+            overflow:    'hidden',
+          }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-primary-50 to-purple-50 shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center shadow-md">
-                <Icon className="w-5 h-5 text-white" />
+          <div style={{
+            display:        'flex',
+            alignItems:     'center',
+            justifyContent: 'space-between',
+            padding:        '1.5rem 2rem',
+            borderBottom:   '1px solid var(--c-border)',
+            flexShrink:     0,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div
+                className="diamond-clip"
+                style={{
+                  width:      40,
+                  height:     40,
+                  background: 'linear-gradient(135deg, var(--c-steel), var(--c-teal))',
+                  display:    'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Icon size={18} color="white" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+              <h2
+                className="display-title"
+                style={{ fontSize: '1.4rem', color: 'white' }}
+              >
+                {title}
+              </h2>
             </div>
             <button
               onClick={onClose}
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-white shadow hover:bg-gray-50 transition-colors text-gray-500 hover:text-gray-800"
+              style={{
+                width:      30,
+                height:     30,
+                display:    'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(255,255,255,0.06)',
+                border:     'none',
+                cursor:     'pointer',
+                color:      'var(--c-text-2)',
+              }}
               aria-label="Закрыть"
             >
-              <X className="w-5 h-5" />
+              <X size={15} />
             </button>
           </div>
 
           {/* Body */}
-          <div className="overflow-y-auto px-8 py-6 flex-1 text-gray-700 text-sm leading-relaxed space-y-5">
-            <p className="text-xs text-gray-400 mb-4">{t(`legal.${type}.updatedAt`)}</p>
+          <div style={{
+            overflowY:   'auto',
+            padding:     '1.5rem 2rem',
+            flex:        1,
+            color:       'var(--c-text-2)',
+            fontSize:    '0.86rem',
+            lineHeight:  1.75,
+            display:     'flex',
+            flexDirection: 'column',
+            gap:         '1.25rem',
+          }}>
+            <p style={{ fontSize: '0.72rem', color: 'var(--c-text-3)', letterSpacing: '0.06em' }}>
+              {t(`legal.${type}.updatedAt`)}
+            </p>
             {sections.map((section, i) => (
               <div key={i}>
                 {section.heading && (
-                  <h3 className="font-semibold text-gray-900 mb-1 text-base">{section.heading}</h3>
+                  <h3
+                    className="display-title"
+                    style={{ fontSize: '1rem', color: 'white', marginBottom: 8 }}
+                  >
+                    {section.heading}
+                  </h3>
                 )}
                 {section.text && <p>{section.text}</p>}
                 {section.list && (
-                  <ul className="list-disc list-inside space-y-1 mt-2 text-gray-600">
-                    {section.list.map((item, j) => <li key={j}>{item}</li>)}
+                  <ul style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+                    {section.list.map((item, j) => (
+                      <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                        <div
+                          className="diamond-clip"
+                          style={{ width: 7, height: 7, background: 'var(--c-accent)', flexShrink: 0, marginTop: 6 }}
+                        />
+                        {item}
+                      </li>
+                    ))}
                   </ul>
                 )}
               </div>
@@ -82,11 +149,15 @@ const LegalModal = ({ type, onClose }) => {
           </div>
 
           {/* Footer */}
-          <div className="px-8 py-4 border-t border-gray-100 shrink-0 flex justify-end bg-gray-50">
-            <button
-              onClick={onClose}
-              className="px-6 py-2 rounded-lg bg-gradient-to-r from-primary-600 to-purple-600 text-white font-semibold text-sm hover:opacity-90 transition-opacity shadow"
-            >
+          <div style={{
+            padding:      '1rem 2rem',
+            borderTop:    '1px solid var(--c-border)',
+            flexShrink:   0,
+            display:      'flex',
+            justifyContent: 'flex-end',
+            background:   'rgba(255,255,255,0.02)',
+          }}>
+            <button className="btn-primary" onClick={onClose}>
               {t('common.close')}
             </button>
           </div>

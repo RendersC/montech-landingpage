@@ -1,159 +1,451 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Bot, Globe, ArrowRight, X, CheckCircle } from 'lucide-react';
+import { MessageCircle, Bot, Globe, ArrowRight, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+/* ── Per-card accent palette ──────────────────────────────────────────────── */
+const ACCENTS = [
+  '#4FC3C3',   // teal — chatbots
+  '#E84B3A',   // coral — AI
+  '#7DD3D2',   // light teal — landing
+];
+
+/* ── Service card ─────────────────────────────────────────────────────────── */
+const ServiceCard = ({ service, index, onOpen, learnMoreLabel, number, accent }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 50 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.3 }}
+    transition={{ duration: 0.7, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+    whileHover="hover"
+    onClick={() => onOpen(index)}
+    className="service-card"
+    style={{
+      position:    'relative',
+      padding:     '3.25rem 2.25rem 2.5rem',
+      background:  'linear-gradient(180deg, rgba(15,58,99,0.55) 0%, rgba(2,33,64,0.62) 100%)',
+      border:      '1px solid rgba(255,255,255,0.06)',
+      backdropFilter:        'blur(14px)',
+      WebkitBackdropFilter:  'blur(14px)',
+      cursor:      'pointer',
+      overflow:    'hidden',
+      transition:  'border-color 0.4s ease, background 0.4s ease',
+    }}
+  >
+    {/* Top accent bar — animates in on view */}
+    <motion.div
+      initial={{ scaleX: 0 }}
+      whileInView={{ scaleX: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.9, delay: 0.3 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+      style={{
+        position: 'absolute', top: 0, left: 0, right: 0,
+        height: 2, background: accent, transformOrigin: 'left',
+        boxShadow: `0 0 16px ${accent}aa`,
+      }}
+    />
+
+    {/* Massive ghost number */}
+    <div style={{
+      position:       'absolute',
+      top:            10,
+      right:          16,
+      fontFamily:     '"Barlow Condensed", sans-serif',
+      fontSize:       '5rem',
+      fontWeight:     900,
+      lineHeight:     0.85,
+      color:          accent,
+      opacity:        0.15,
+      letterSpacing:  '-0.05em',
+      pointerEvents:  'none',
+    }}>
+      {number}
+    </div>
+
+    {/* Icon block — diamond with outer outline echo */}
+    <div style={{ position: 'relative', width: 96, height: 96, marginBottom: 32 }}>
+      <motion.div
+        variants={{ hover: { rotate: 90, scale: 1.05 } }}
+        transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+        className="diamond-clip"
+        style={{
+          width:      96,
+          height:     96,
+          background: `linear-gradient(135deg, ${accent}26 0%, ${accent}99 100%)`,
+          display:    'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow:  `0 8px 32px ${accent}33`,
+        }}
+      >
+        {/* counter-rotate to keep icon upright */}
+        <motion.div
+          variants={{ hover: { rotate: -90 } }}
+          transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+        >
+          <service.icon size={34} color="white" />
+        </motion.div>
+      </motion.div>
+
+      {/* Outlined echo behind the icon */}
+      <div
+        className="diamond-clip"
+        style={{
+          position:   'absolute',
+          top:        -10,
+          left:       -10,
+          width:      116,
+          height:     116,
+          background: 'transparent',
+          outline:    `1px solid ${accent}55`,
+          opacity:    0.7,
+        }}
+      />
+    </div>
+
+    {/* Title */}
+    <h3
+      className="display-title"
+      style={{
+        fontSize:     '1.7rem',
+        color:        'white',
+        marginBottom: 14,
+        transition:   'color 0.3s ease',
+      }}
+    >
+      {service.title}
+    </h3>
+
+    {/* Description */}
+    <p style={{ color: 'var(--c-text-2)', lineHeight: 1.75, marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+      {service.description}
+    </p>
+
+    {/* Feature list */}
+    <ul style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.75rem' }}>
+      {service.features.map((f, i) => (
+        <li
+          key={i}
+          style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--c-text-3)', fontSize: '0.83rem' }}
+        >
+          <div
+            className="diamond-clip"
+            style={{ width: 7, height: 7, background: accent, flexShrink: 0 }}
+          />
+          {f}
+        </li>
+      ))}
+    </ul>
+
+    {/* Learn more — animates on hover */}
+    <motion.div
+      variants={{ hover: { x: 6 } }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      style={{
+        display:        'inline-flex',
+        alignItems:     'center',
+        gap:            8,
+        color:          accent,
+        fontSize:       '0.72rem',
+        letterSpacing:  '0.18em',
+        textTransform:  'uppercase',
+        fontWeight:     700,
+      }}
+    >
+      {learnMoreLabel}
+      <ArrowRight size={14} />
+    </motion.div>
+
+    {/* Bottom-right corner diamond accent */}
+    <motion.div
+      variants={{ hover: { rotate: 180, opacity: 1 } }}
+      transition={{ duration: 0.5 }}
+      className="diamond-clip"
+      style={{
+        position:   'absolute',
+        bottom:     16,
+        right:      16,
+        width:      14,
+        height:     14,
+        background: accent,
+        opacity:    0.4,
+      }}
+    />
+
+    <style>{`
+      .service-card:hover {
+        background: linear-gradient(180deg, rgba(15,58,99,0.75) 0%, rgba(2,33,64,0.78) 100%) !important;
+        border-color: ${accent}40 !important;
+      }
+    `}</style>
+  </motion.div>
+);
+
+/* ── Section ──────────────────────────────────────────────────────────────── */
 const Services = () => {
   const { t } = useTranslation();
   const [openModal, setOpenModal] = useState(null);
 
   const services = [
     {
-      icon: MessageCircle,
-      key: 'chatbots',
-      title: t('servicesSection.cards.chatbots.title'),
+      icon:        MessageCircle,
+      key:         'chatbots',
+      title:       t('servicesSection.cards.chatbots.title'),
       description: t('servicesSection.cards.chatbots.description'),
-      features: [t('servicesSection.cards.chatbots.features.0'), t('servicesSection.cards.chatbots.features.1'), t('servicesSection.cards.chatbots.features.2'), t('servicesSection.cards.chatbots.features.3')]
+      features:    [0, 1, 2, 3].map(i => t(`servicesSection.cards.chatbots.features.${i}`)),
     },
     {
-      icon: Bot,
-      key: 'ai',
-      title: t('servicesSection.cards.ai.title'),
+      icon:        Bot,
+      key:         'ai',
+      title:       t('servicesSection.cards.ai.title'),
       description: t('servicesSection.cards.ai.description'),
-      features: [t('servicesSection.cards.ai.features.0'), t('servicesSection.cards.ai.features.1'), t('servicesSection.cards.ai.features.2'), t('servicesSection.cards.ai.features.3')]
+      features:    [0, 1, 2, 3].map(i => t(`servicesSection.cards.ai.features.${i}`)),
     },
     {
-      icon: Globe,
-      key: 'landing',
-      title: t('servicesSection.cards.landing.title'),
+      icon:        Globe,
+      key:         'landing',
+      title:       t('servicesSection.cards.landing.title'),
       description: t('servicesSection.cards.landing.description'),
-      features: [t('servicesSection.cards.landing.features.0'), t('servicesSection.cards.landing.features.1'), t('servicesSection.cards.landing.features.2'), t('servicesSection.cards.landing.features.3')]
-    }
+      features:    [0, 1, 2, 3].map(i => t(`servicesSection.cards.landing.features.${i}`)),
+    },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { y: 50, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
-  };
-
   const activeService = openModal !== null ? services[openModal] : null;
+  const activeAccent  = openModal !== null ? ACCENTS[openModal] : ACCENTS[0];
 
   return (
-    <section id="services" className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
+    <section
+      id="services"
+      style={{
+        position:   'relative',
+        padding:    '9rem 0 7rem',
+        overflow:   'hidden',
+        background: `
+          linear-gradient(180deg,
+            var(--c-bg) 0%,
+            #021a35    18%,
+            #022240    50%,
+            #021a35    82%,
+            var(--c-bg) 100%
+          )
+        `,
+      }}
+    >
+      {/* ── Top diagonal divider — slices into hero  ──────────────────────── */}
+      <svg
+        viewBox="0 0 1440 60"
+        preserveAspectRatio="none"
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 60, pointerEvents: 'none' }}
+      >
+        <polygon points="0,0 1440,0 1440,30 0,60" fill="var(--c-bg)" />
+      </svg>
+
+      {/* ── Bottom diagonal divider ─────────────────────────────────────── */}
+      <svg
+        viewBox="0 0 1440 60"
+        preserveAspectRatio="none"
+        style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 60, pointerEvents: 'none' }}
+      >
+        <polygon points="0,30 1440,0 1440,60 0,60" fill="var(--c-bg)" />
+      </svg>
+
+      {/* ── Massive ghost watermark text ────────────────────────────────── */}
+      <div
+        aria-hidden
+        style={{
+          position:       'absolute',
+          top:            '50%',
+          left:           '50%',
+          transform:      'translate(-50%, -50%)',
+          fontFamily:     '"Barlow Condensed", sans-serif',
+          fontWeight:     900,
+          fontSize:       'clamp(12rem, 28vw, 24rem)',
+          letterSpacing:  '-0.06em',
+          lineHeight:     0.85,
+          color:          'rgba(79, 195, 195, 0.025)',
+          textTransform:  'uppercase',
+          pointerEvents:  'none',
+          whiteSpace:     'nowrap',
+          userSelect:     'none',
+        }}
+      >
+        SERVICES
+      </div>
+
+      {/* ── Center radial spotlight ──────────────────────────────────────── */}
+      <div
+        style={{
+          position: 'absolute',
+          top:      '50%',
+          left:     '50%',
+          width:    900,
+          height:   900,
+          transform: 'translate(-50%, -50%)',
+          background: 'radial-gradient(circle, rgba(79,195,195,0.07) 0%, transparent 60%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* ── Blueprint grid (very subtle, only at corners) ──────────────── */}
+      <div
+        style={{
+          position: 'absolute',
+          inset:    0,
+          opacity:  0.06,
+          backgroundImage: `
+            linear-gradient(rgba(79,195,195,1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(79,195,195,1) 1px, transparent 1px)
+          `,
+          backgroundSize: '90px 90px',
+          maskImage:        'radial-gradient(ellipse at center, transparent 30%, black 90%)',
+          WebkitMaskImage:  'radial-gradient(ellipse at center, transparent 30%, black 90%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* ── Floating diamond decorators ─────────────────────────────────── */}
+      <motion.div
+        animate={{ y: [0, -16, 0], opacity: [0.5, 0.85, 0.5] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        className="diamond-clip"
+        style={{
+          position: 'absolute', top: '15%', left: '6%',
+          width: 90, height: 90,
+          background: 'rgba(79,195,195,0.06)',
+          outline:    '1px solid rgba(79,195,195,0.18)',
+          pointerEvents: 'none',
+        }}
+      />
+      <motion.div
+        animate={{ y: [0, 14, 0], opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        className="diamond-clip"
+        style={{
+          position: 'absolute', top: '20%', right: '5%',
+          width: 60, height: 60,
+          background: 'rgba(232,75,58,0.18)',
+          pointerEvents: 'none',
+        }}
+      />
+      <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        className="diamond-clip"
+        style={{
+          position: 'absolute', bottom: '14%', left: '12%',
+          width: 32, height: 32,
+          background: 'rgba(125,211,210,0.45)',
+          pointerEvents: 'none',
+        }}
+      />
+      <motion.div
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 3.5 }}
+        className="diamond-clip"
+        style={{
+          position: 'absolute', bottom: '18%', right: '14%',
+          width: 22, height: 22,
+          background: 'rgba(79,195,195,0.7)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* ── Corner architectural brackets ───────────────────────────────── */}
+      {[
+        { top: '14%', left: '4%' },
+        { top: '14%', right: '4%' },
+        { bottom: '14%', left: '4%' },
+        { bottom: '14%', right: '4%' },
+      ].map((pos, i) => (
+        <div
+          key={i}
+          style={{
+            position: 'absolute',
+            ...pos,
+            width:    18,
+            height:   18,
+            border:   '1px solid rgba(79,195,195,0.25)',
+            borderRight:  i % 2 === 0 ? 'none' : '1px solid rgba(79,195,195,0.25)',
+            borderLeft:   i % 2 === 1 ? 'none' : '1px solid rgba(79,195,195,0.25)',
+            borderBottom: i < 2     ? '1px solid rgba(79,195,195,0.25)' : 'none',
+            borderTop:    i >= 2    ? '1px solid rgba(79,195,195,0.25)' : 'none',
+            pointerEvents: 'none',
+          }}
+        />
+      ))}
+
+      {/* ── Content ────────────────────────────────────────────────────── */}
+      <div className="container mx-auto px-6 lg:px-12 relative" style={{ zIndex: 2 }}>
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.7 }}
+          style={{ marginBottom: '4rem', textAlign: 'center' }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            {t('servicesSection.title.part1')} <span className="gradient-text">{t('servicesSection.title.part2')}</span>
+          <span className="section-eyebrow" style={{ marginBottom: 14, display: 'block' }}>
+            {t('servicesSection.title.part1')}
+          </span>
+          <h2
+            className="display-title"
+            style={{ fontSize: 'clamp(2.8rem, 7.5vw, 6rem)', color: 'white', marginBottom: '1rem' }}
+          >
+            {t('servicesSection.title.part2')}
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p style={{ color: 'var(--c-text-2)', maxWidth: 540, margin: '0 auto', lineHeight: 1.72, fontSize: '0.95rem' }}>
             {t('servicesSection.subtitle')}
           </p>
+          {/* Decorative under-title diamond */}
+          <div
+            className="diamond-clip"
+            style={{ width: 8, height: 8, background: 'var(--c-accent)', margin: '1.5rem auto 0' }}
+          />
         </motion.div>
 
-        {/* Services Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+        {/* Cards row */}
+        <div
+          style={{
+            display:   'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
+            gap:       '1.5rem',
+          }}
         >
-          {services.map((service, index) => (
-            <motion.div
-              key={index}
-              variants={cardVariants}
-              whileHover={{ y: -10 }}
-              className="card p-8 group cursor-pointer"
-            >
-              {/* Icon */}
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <service.icon className="text-white" size={32} />
-              </div>
-
-              {/* Title */}
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                {service.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                {service.description}
-              </p>
-
-              {/* Features */}
-              <ul className="space-y-2 mb-6">
-                {service.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-center text-sm text-gray-600">
-                    <div className="w-2 h-2 bg-primary-500 rounded-full mr-3"></div>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              {/* Learn More Button */}
-              <motion.button
-                whileHover={{ x: 5 }}
-                onClick={() => setOpenModal(index)}
-                className="flex items-center text-primary-600 font-semibold group-hover:text-primary-700 transition-colors duration-200"
-              >
-                {t('common.learnMore')}
-                <ArrowRight className="ml-2" size={16} />
-              </motion.button>
-            </motion.div>
+          {services.map((s, i) => (
+            <ServiceCard
+              key={i}
+              service={s}
+              index={i}
+              number={String(i + 1).padStart(2, '0')}
+              accent={ACCENTS[i]}
+              onOpen={setOpenModal}
+              learnMoreLabel={t('common.learnMore')}
+            />
           ))}
-        </motion.div>
+        </div>
 
         {/* Bottom CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-center mt-16"
+          style={{ marginTop: '4rem', textAlign: 'center' }}
         >
-          <p className="text-lg text-gray-600 mb-6">
+          <p style={{ color: 'var(--c-text-2)', marginBottom: '1.25rem', fontSize: '0.9rem' }}>
             {t('servicesSection.bottomCta.text')}
           </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              const element = document.getElementById('contact');
-              if (element) element.scrollIntoView({ behavior: 'smooth' });
-            }}
+          <button
             className="btn-primary"
+            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
           >
             {t('servicesSection.bottomCta.button')}
-          </motion.button>
+            <ArrowRight size={14} />
+          </button>
         </motion.div>
       </div>
 
-      {/* Modal */}
+      {/* ── Modal ──────────────────────────────────────────────────────── */}
       <AnimatePresence>
         {openModal !== null && activeService && (
           <motion.div
@@ -161,96 +453,121 @@ const Services = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
+            style={{
+              position:        'fixed',
+              inset:           0,
+              zIndex:          50,
+              display:         'flex',
+              alignItems:      'center',
+              justifyContent:  'center',
+              padding:         '1rem',
+              backgroundColor: 'rgba(1,13,26,0.88)',
+              backdropFilter:  'blur(6px)',
+            }}
             onClick={() => setOpenModal(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, scale: 0.93, y: 28 }}
+              animate={{ opacity: 1, scale: 1,    y: 0  }}
+              exit={{ opacity: 0,   scale: 0.93, y: 28 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                maxWidth:    640,
+                width:       '100%',
+                maxHeight:   '90vh',
+                overflowY:   'auto',
+                background:  'var(--c-surface-2)',
+                border:      '1px solid var(--c-border-2)',
+              }}
+              onClick={e => e.stopPropagation()}
             >
-              {/* Modal Header */}
-              <div className="bg-gradient-to-r from-primary-500 to-purple-600 rounded-t-2xl p-8 relative">
+              <div style={{ borderBottom: '1px solid var(--c-border)', padding: '2rem', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: activeAccent }} />
+
                 <button
                   onClick={() => setOpenModal(null)}
-                  className="absolute top-4 right-4 w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors"
+                  style={{
+                    position:   'absolute', top: 14, right: 14,
+                    width: 30, height: 30,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: 'none', cursor: 'pointer', color: 'var(--c-text-2)',
+                  }}
                 >
-                  <X className="text-white" size={18} />
+                  <X size={15} />
                 </button>
-                <div className="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mb-4">
-                  <activeService.icon className="text-white" size={28} />
+
+                <div
+                  className="diamond-clip"
+                  style={{
+                    width: 60, height: 60,
+                    background: `linear-gradient(135deg, ${activeAccent}40 0%, ${activeAccent}cc 100%)`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    marginBottom: 16,
+                  }}
+                >
+                  <activeService.icon size={24} color="white" />
                 </div>
-                <h3 className="text-3xl font-bold text-white mb-2">
+
+                <h3 className="display-title" style={{ fontSize: '2rem', color: 'white' }}>
                   {activeService.title}
                 </h3>
-                <p className="text-white text-opacity-90 text-lg">
+                <p style={{ color: 'var(--c-text-2)', marginTop: 8, fontSize: '0.88rem' }}>
                   {t(`servicesSection.cards.${activeService.key}.expanded.tagline`)}
                 </p>
               </div>
 
-              {/* Modal Body */}
-              <div className="p-8 space-y-6">
-                {/* Pain point */}
-                <div>
-                  <p className="text-gray-700 text-lg leading-relaxed">
-                    {t(`servicesSection.cards.${activeService.key}.expanded.pain`)}
-                  </p>
-                </div>
+              <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <p style={{ color: 'var(--c-text-2)', lineHeight: 1.76, fontSize: '0.9rem' }}>
+                  {t(`servicesSection.cards.${activeService.key}.expanded.pain`)}
+                </p>
 
-                {/* Solution */}
-                <div className="bg-gray-50 rounded-xl p-5">
-                  <p className="text-gray-800 leading-relaxed font-medium">
+                <div style={{
+                  background:  `${activeAccent}0d`,
+                  borderLeft:  `3px solid ${activeAccent}`,
+                  padding:     '1.1rem 1.25rem',
+                }}>
+                  <p style={{ color: 'rgba(255,255,255,0.82)', lineHeight: 1.72, fontSize: '0.88rem' }}>
                     {t(`servicesSection.cards.${activeService.key}.expanded.solution`)}
                   </p>
                 </div>
 
-                {/* Benefits */}
                 <div>
-                  <h4 className="font-bold text-gray-900 text-lg mb-4">
+                  <h4 className="display-title" style={{ fontSize: '1.1rem', color: 'white', marginBottom: 14 }}>
                     {t(`servicesSection.cards.${activeService.key}.expanded.benefitsTitle`)}
                   </h4>
-                  <ul className="space-y-3">
-                    {[0, 1, 2].map((i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <CheckCircle className="text-primary-500 mt-0.5 flex-shrink-0" size={20} />
-                        <span className="text-gray-700">
-                          {t(`servicesSection.cards.${activeService.key}.expanded.benefits.${i}`)}
-                        </span>
+                  <ul style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {[0, 1, 2].map(i => (
+                      <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, color: 'var(--c-text-2)', fontSize: '0.88rem' }}>
+                        <div className="diamond-clip" style={{ width: 10, height: 10, background: activeAccent, flexShrink: 0, marginTop: 4 }} />
+                        {t(`servicesSection.cards.${activeService.key}.expanded.benefits.${i}`)}
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                {/* Result highlight */}
-                <div className="border-l-4 border-primary-500 pl-4 py-2">
-                  <p className="text-primary-700 font-semibold text-lg">
+                <div style={{ borderLeft: `3px solid ${activeAccent}`, paddingLeft: '1rem', paddingTop: 4, paddingBottom: 4 }}>
+                  <p style={{ color: activeAccent, fontWeight: 600, fontSize: '0.92rem' }}>
                     {t(`servicesSection.cards.${activeService.key}.expanded.result`)}
                   </p>
                 </div>
 
-                {/* CTA */}
-                <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, paddingTop: 8 }}>
+                  <button
+                    className="btn-primary"
+                    style={{ flex: 1, justifyContent: 'center' }}
                     onClick={() => {
                       setOpenModal(null);
-                      setTimeout(() => {
-                        const el = document.getElementById('contact');
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
-                      }, 200);
+                      setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 200);
                     }}
-                    className="btn-primary flex-1 text-center"
                   >
                     {t(`servicesSection.cards.${activeService.key}.expanded.cta`)}
-                  </motion.button>
+                    <ArrowRight size={14} />
+                  </button>
                   <button
+                    className="btn-outline"
+                    style={{ flex: 1, justifyContent: 'center' }}
                     onClick={() => setOpenModal(null)}
-                    className="flex-1 border-2 border-gray-200 rounded-lg px-6 py-3 text-gray-600 font-semibold hover:border-gray-300 transition-colors"
                   >
                     {t('common.close')}
                   </button>

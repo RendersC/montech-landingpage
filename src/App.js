@@ -8,6 +8,8 @@ import CallToAction from './components/CallToAction';
 import Contact from './components/Contact';
 import Navbar from './components/Navbar';
 import LegalModal from './components/LegalModal';
+import SmoothScroll from './components/SmoothScroll';
+import TechMarquee from './components/TechMarquee';
 import { useTranslation } from 'react-i18next';
 
 function App() {
@@ -15,10 +17,12 @@ function App() {
   const [legalModal, setLegalModal] = useState(null); // 'privacy' | 'offer' | 'consent' | null
 
   return (
-    <div className="min-h-screen gradient-bg">
+    <SmoothScroll>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--c-bg)' }}>
       <Navbar />
       <main>
         <Hero />
+        <TechMarquee />
         <Services />
         <WhyChooseUs />
         <CaseStudies />
@@ -27,34 +31,40 @@ function App() {
         <Contact onOpenLegal={setLegalModal} />
       </main>
 
-      <footer className="bg-gray-900 text-white py-10">
-        <div className="container mx-auto px-4 text-center">
-          <p className="mb-4 text-gray-400 text-sm">{t('footer.copyright')}</p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
-            <button
-              onClick={() => setLegalModal('privacy')}
-              className="text-gray-400 hover:text-white transition-colors underline-offset-2 hover:underline"
-            >
-              {t('legal.privacy.linkTitle')}
-            </button>
-            <button
-              onClick={() => setLegalModal('offer')}
-              className="text-gray-400 hover:text-white transition-colors underline-offset-2 hover:underline"
-            >
-              {t('legal.offer.linkTitle')}
-            </button>
-            <button
-              onClick={() => setLegalModal('consent')}
-              className="text-gray-400 hover:text-white transition-colors underline-offset-2 hover:underline"
-            >
-              {t('legal.consent.linkTitle')}
-            </button>
+      <footer style={{ background: 'var(--c-bg)', borderTop: '1px solid var(--c-border)', padding: '2.5rem 0' }}>
+        <div className="container mx-auto px-6 lg:px-12" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+          {/* Logo */}
+          <span style={{ fontFamily: '"Barlow Condensed", sans-serif', fontWeight: 900, fontSize: '1.15rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--c-accent)' }}>
+            Steppe<span style={{ color: 'rgba(255,255,255,0.6)' }}>Dev</span>
+          </span>
+          {/* Copyright */}
+          <p style={{ color: 'var(--c-text-3)', fontSize: '0.75rem', letterSpacing: '0.06em' }}>
+            {t('footer.copyright')}
+          </p>
+          {/* Legal links */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem' }}>
+            {[
+              { key: 'privacy', label: t('legal.privacy.linkTitle') },
+              { key: 'offer',   label: t('legal.offer.linkTitle')   },
+              { key: 'consent', label: t('legal.consent.linkTitle') },
+            ].map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setLegalModal(key)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-text-3)', fontSize: '0.72rem', letterSpacing: '0.08em', textTransform: 'uppercase', transition: 'color 0.2s ease' }}
+                onMouseEnter={e => (e.target.style.color = 'var(--c-text-2)')}
+                onMouseLeave={e => (e.target.style.color = 'var(--c-text-3)')}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       </footer>
 
       <LegalModal type={legalModal} onClose={() => setLegalModal(null)} />
     </div>
+    </SmoothScroll>
   );
 }
 

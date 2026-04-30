@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import MagneticButton from './MagneticButton';
 
 const LANGUAGES = [
   { code: 'ru', label: 'RU', full: 'Русский' },
@@ -10,31 +11,28 @@ const LANGUAGES = [
 ];
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen,   setIsOpen]   = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const langRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (langRef.current && !langRef.current.contains(e.target)) {
-        setLangOpen(false);
-      }
+      if (langRef.current && !langRef.current.contains(e.target)) setLangOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) element.scrollIntoView({ behavior: 'smooth' });
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setIsOpen(false);
   };
 
@@ -42,155 +40,247 @@ const Navbar = () => {
 
   const navItems = [
     { key: 'services', label: t('nav.services') },
-    { key: 'why-us', label: t('nav.whyUs') },
-    { key: 'cases', label: t('nav.cases') },
-    { key: 'reviews', label: t('nav.reviews') },
-    { key: 'contact', label: t('nav.contact') },
+    { key: 'why-us',   label: t('nav.whyUs')    },
+    { key: 'cases',    label: t('nav.cases')     },
+    { key: 'reviews',  label: t('nav.reviews')   },
+    { key: 'contact',  label: t('nav.contact')   },
   ];
 
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
-      }`}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      style={{
+        position:   'fixed',
+        top:        0,
+        width:      '100%',
+        zIndex:     50,
+        transition: 'background 0.4s ease, box-shadow 0.4s ease',
+        background: scrolled
+          ? 'rgba(1, 13, 26, 0.92)'
+          : 'transparent',
+        backdropFilter: scrolled ? 'blur(16px)' : 'none',
+        borderBottom:   scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
+      }}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="text-2xl font-bold gradient-text cursor-pointer"
-            onClick={() => scrollToSection('hero')}
-          >
-            SteppeDev
-          </motion.div>
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="flex justify-between items-center py-5">
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8 items-center">
-            {navItems.map((item) => (
+          {/* Logo */}
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            onClick={() => scrollTo('hero')}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+          >
+            <span
+              style={{
+                fontFamily:    '"Barlow Condensed", sans-serif',
+                fontWeight:    900,
+                fontSize:      '1.5rem',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                color:         'var(--c-accent)',
+              }}
+            >
+              Steppe<span style={{ color: 'rgba(255,255,255,0.85)' }}>Dev</span>
+            </span>
+          </motion.button>
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-8">
+            {navItems.map(item => (
               <motion.button
                 key={item.key}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200"
-                onClick={() => scrollToSection(item.key)}
+                onClick={() => scrollTo(item.key)}
+                whileHover="hover"
+                style={{
+                  background:    'none',
+                  border:        'none',
+                  cursor:        'pointer',
+                  fontFamily:    'Outfit, sans-serif',
+                  fontSize:      '0.78rem',
+                  fontWeight:    500,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color:         'var(--c-text-2)',
+                  transition:    'color 0.2s ease',
+                  padding:       '4px 0',
+                  position:      'relative',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--c-text)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--c-text-2)')}
               >
                 {item.label}
+                <motion.span
+                  variants={{ hover: { scaleX: 1 }, initial: { scaleX: 0 } }}
+                  initial="initial"
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  style={{
+                    position:   'absolute',
+                    left:       0,
+                    bottom:     -4,
+                    width:      '100%',
+                    height:     1,
+                    background: 'var(--c-accent)',
+                    transformOrigin: 'left',
+                  }}
+                />
               </motion.button>
             ))}
 
-            {/* Custom Language Switcher */}
-            <div className="relative ml-4" ref={langRef}>
+            {/* Language picker */}
+            <div className="relative" ref={langRef}>
               <button
                 onClick={() => setLangOpen(!langOpen)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:border-primary-400 hover:bg-primary-50 transition-all duration-200 text-sm font-semibold text-gray-700"
+                style={{
+                  display:       'flex',
+                  alignItems:    'center',
+                  gap:           '4px',
+                  background:    'rgba(255,255,255,0.05)',
+                  border:        '1px solid var(--c-border-2)',
+                  padding:       '5px 12px',
+                  cursor:        'pointer',
+                  fontFamily:    'Outfit, sans-serif',
+                  fontSize:      '0.72rem',
+                  fontWeight:    600,
+                  letterSpacing: '0.12em',
+                  color:         'var(--c-text-2)',
+                  transition:    'all 0.2s ease',
+                }}
               >
                 {currentLang.label}
-                <ChevronDown
-                  size={14}
-                  className={`transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`}
-                />
+                <ChevronDown size={12} style={{ transform: langOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
               </button>
 
               <AnimatePresence>
                 {langOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50"
+                    style={{
+                      position:   'absolute',
+                      right:      0,
+                      top:        '110%',
+                      minWidth:   130,
+                      background: 'var(--c-surface-2)',
+                      border:     '1px solid var(--c-border-2)',
+                      overflow:   'hidden',
+                      zIndex:     60,
+                    }}
                   >
-                    {LANGUAGES.map((lang) => (
+                    {LANGUAGES.map(lang => (
                       <button
                         key={lang.code}
-                        onClick={() => {
-                          i18n.changeLanguage(lang.code);
-                          setLangOpen(false);
+                        onClick={() => { i18n.changeLanguage(lang.code); setLangOpen(false); }}
+                        style={{
+                          display:    'flex',
+                          alignItems: 'center',
+                          gap:        10,
+                          width:      '100%',
+                          padding:    '9px 14px',
+                          background: i18n.language === lang.code ? 'rgba(79,195,195,0.1)' : 'transparent',
+                          border:     'none',
+                          cursor:     'pointer',
+                          fontFamily: 'Outfit, sans-serif',
+                          fontSize:   '0.78rem',
+                          color:      i18n.language === lang.code ? 'var(--c-accent)' : 'var(--c-text-2)',
+                          transition: 'all 0.15s ease',
+                          textAlign:  'left',
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors duration-150 ${
-                          i18n.language === lang.code
-                            ? 'bg-primary-50 text-primary-700'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
                       >
-                        <span className="font-bold text-xs w-6">{lang.label}</span>
-                        <span className="text-gray-500 font-normal">{lang.full}</span>
+                        <span style={{ fontWeight: 700, fontSize: '0.68rem', width: 20 }}>{lang.label}</span>
+                        <span style={{ color: 'var(--c-text-3)' }}>{lang.full}</span>
                       </button>
                     ))}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
+
+            {/* CTA */}
+            <MagneticButton strength={14} className="btn-primary" onClick={() => scrollTo('contact')}>
+              {t('getAQuote')}
+            </MagneticButton>
           </div>
 
-          {/* CTA Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="hidden md:block btn-primary"
-            onClick={() => scrollToSection('contact')}
-          >
-            {t('getAQuote')}
-          </motion.button>
-
-          {/* Mobile Menu Button */}
+          {/* Mobile burger */}
           <button
-            className="md:hidden text-gray-700"
+            className="md:hidden"
             onClick={() => setIsOpen(!isOpen)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-text-2)' }}
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            {isOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile menu */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-white border-t border-gray-200 overflow-hidden"
+              style={{
+                borderTop:  '1px solid var(--c-border)',
+                overflow:   'hidden',
+                background: 'rgba(1,13,26,0.98)',
+              }}
             >
-              <div className="py-4 space-y-2">
-                {navItems.map((item) => (
+              <div className="py-6 space-y-1">
+                {navItems.map(item => (
                   <button
                     key={item.key}
-                    className="block w-full text-left px-4 py-2.5 text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition-colors duration-200 font-medium"
-                    onClick={() => scrollToSection(item.key)}
+                    onClick={() => scrollTo(item.key)}
+                    style={{
+                      display:       'block',
+                      width:         '100%',
+                      textAlign:     'left',
+                      padding:       '10px 0',
+                      background:    'none',
+                      border:        'none',
+                      cursor:        'pointer',
+                      fontFamily:    'Outfit, sans-serif',
+                      fontSize:      '0.82rem',
+                      fontWeight:    500,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      color:         'var(--c-text-2)',
+                    }}
                   >
                     {item.label}
                   </button>
                 ))}
 
-                <div className="px-4 pt-2">
-                  <button
-                    className="w-full btn-primary"
-                    onClick={() => scrollToSection('contact')}
-                  >
-                    {t('getAQuote')}
-                  </button>
+                <div className="pt-4 flex gap-2">
+                  {LANGUAGES.map(lang => (
+                    <button
+                      key={lang.code}
+                      onClick={() => i18n.changeLanguage(lang.code)}
+                      style={{
+                        flex:       1,
+                        padding:    '8px',
+                        background: i18n.language === lang.code ? 'rgba(79,195,195,0.15)' : 'rgba(255,255,255,0.04)',
+                        border:     `1px solid ${i18n.language === lang.code ? 'rgba(79,195,195,0.4)' : 'var(--c-border)'}`,
+                        cursor:     'pointer',
+                        fontFamily: 'Outfit, sans-serif',
+                        fontSize:   '0.72rem',
+                        fontWeight: 700,
+                        color:      i18n.language === lang.code ? 'var(--c-accent)' : 'var(--c-text-3)',
+                        letterSpacing: '0.1em',
+                      }}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
                 </div>
 
-                {/* Mobile Language Switcher */}
-                <div className="px-4 pt-2">
-                  <div className="flex gap-2">
-                    {LANGUAGES.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => i18n.changeLanguage(lang.code)}
-                        className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                          i18n.language === lang.code
-                            ? 'bg-primary-600 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        {lang.label}
-                      </button>
-                    ))}
-                  </div>
+                <div className="pt-3">
+                  <button className="btn-primary w-full justify-center" onClick={() => scrollTo('contact')}>
+                    {t('getAQuote')}
+                  </button>
                 </div>
               </div>
             </motion.div>
