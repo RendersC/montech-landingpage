@@ -28,7 +28,7 @@ const Contact = ({ onOpenLegal }) => {
   const sendToTelegram = async (name, email, message) => {
     const BOT_TOKEN = '8631734357:AAEWTyh_iE5zc4N-TVL-1sAgXwHd_dVSpps';
     const CHAT_ID = '1555289492';
-    const text = `🔔 *Новая заявка с сайта MonTech IT*\n\n👤 *Имя:* ${name}\n📧 *Email:* ${email}\n\n💬 *Сообщение:*\n${message}`;
+    const text = `🔔 *Новая заявка с сайта SteppeDev*\n\n👤 *Имя:* ${name}\n📧 *Email:* ${email}\n\n💬 *Сообщение:*\n${message}`;
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -82,11 +82,11 @@ const Contact = ({ onOpenLegal }) => {
   };
 
   const openWhatsApp = () => {
-    window.open('https://wa.me/77086570811?text=Привет%20MonTech%20IT,%20я%20хотел%20бы%20обсудить%20проект.', '_blank');
+    window.open('https://wa.me/77086570811?text=Привет%20SteppeDev,%20я%20хотел%20бы%20обсудить%20проект.', '_blank');
   };
 
   const openEmail = () => {
-    window.open('mailto:montech.kz@gmail.com?subject=Project%20Inquiry', '_blank');
+    window.open('mailto:steppedev@gmail.com?subject=Project%20Inquiry', '_blank');
   };
 
   return (

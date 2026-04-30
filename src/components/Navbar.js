@@ -64,7 +64,7 @@ const Navbar = () => {
             className="text-2xl font-bold gradient-text cursor-pointer"
             onClick={() => scrollToSection('hero')}
           >
-            MonTech IT
+            SteppeDev
           </motion.div>
 
           {/* Desktop Navigation */}
