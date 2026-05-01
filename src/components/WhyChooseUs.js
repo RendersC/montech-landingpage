@@ -114,17 +114,6 @@ const WhyChooseUs = () => {
               ))}
             </div>
 
-            <p style={{ color: 'var(--c-text-2)', fontSize: '0.88rem', marginBottom: '1rem', lineHeight: 1.6 }}>
-              {t('why.bottomCta.text')}
-            </p>
-            <MagneticButton
-              strength={18}
-              className="btn-primary"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              {t('why.bottomCta.button')}
-              <ArrowRight size={14} />
-            </MagneticButton>
           </motion.div>
 
           {/* ── Right column: feature panels ──────────────────────────────── */}
@@ -194,6 +183,27 @@ const WhyChooseUs = () => {
             ))}
           </div>
         </div>
+
+        {/* ── Centered bottom CTA — fixes column asymmetry ────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          style={{ textAlign: 'center', marginTop: '4rem' }}
+        >
+          <p style={{ color: 'var(--c-text-2)', fontSize: '0.92rem', marginBottom: '1.25rem', lineHeight: 1.6 }}>
+            {t('why.bottomCta.text')}
+          </p>
+          <MagneticButton
+            strength={18}
+            className="btn-primary"
+            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            {t('why.bottomCta.button')}
+            <ArrowRight size={14} />
+          </MagneticButton>
+        </motion.div>
       </div>
     </section>
   );

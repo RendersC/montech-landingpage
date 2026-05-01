@@ -220,35 +220,12 @@ const Services = () => {
         position:   'relative',
         padding:    '9rem 0 7rem',
         overflow:   'hidden',
+        /* Smooth radial gradient — fades to var(--c-bg) at edges, no hard cuts */
         background: `
-          linear-gradient(180deg,
-            var(--c-bg) 0%,
-            #021a35    18%,
-            #022240    50%,
-            #021a35    82%,
-            var(--c-bg) 100%
-          )
+          radial-gradient(ellipse 110% 90% at center, #022240 0%, #021932 50%, var(--c-bg) 100%)
         `,
       }}
     >
-      {/* ── Top diagonal divider — slices into hero  ──────────────────────── */}
-      <svg
-        viewBox="0 0 1440 60"
-        preserveAspectRatio="none"
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 60, pointerEvents: 'none' }}
-      >
-        <polygon points="0,0 1440,0 1440,30 0,60" fill="var(--c-bg)" />
-      </svg>
-
-      {/* ── Bottom diagonal divider ─────────────────────────────────────── */}
-      <svg
-        viewBox="0 0 1440 60"
-        preserveAspectRatio="none"
-        style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 60, pointerEvents: 'none' }}
-      >
-        <polygon points="0,30 1440,0 1440,60 0,60" fill="var(--c-bg)" />
-      </svg>
-
       {/* ── Massive ghost watermark text ────────────────────────────────── */}
       <div
         aria-hidden
@@ -262,7 +239,7 @@ const Services = () => {
           fontSize:       'clamp(12rem, 28vw, 24rem)',
           letterSpacing:  '-0.06em',
           lineHeight:     0.85,
-          color:          'rgba(79, 195, 195, 0.025)',
+          color:          'rgba(79, 195, 195, 0.022)',
           textTransform:  'uppercase',
           pointerEvents:  'none',
           whiteSpace:     'nowrap',
@@ -281,24 +258,7 @@ const Services = () => {
           width:    900,
           height:   900,
           transform: 'translate(-50%, -50%)',
-          background: 'radial-gradient(circle, rgba(79,195,195,0.07) 0%, transparent 60%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* ── Blueprint grid (very subtle, only at corners) ──────────────── */}
-      <div
-        style={{
-          position: 'absolute',
-          inset:    0,
-          opacity:  0.06,
-          backgroundImage: `
-            linear-gradient(rgba(79,195,195,1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(79,195,195,1) 1px, transparent 1px)
-          `,
-          backgroundSize: '90px 90px',
-          maskImage:        'radial-gradient(ellipse at center, transparent 30%, black 90%)',
-          WebkitMaskImage:  'radial-gradient(ellipse at center, transparent 30%, black 90%)',
+          background: 'radial-gradient(circle, rgba(79,195,195,0.09) 0%, transparent 60%)',
           pointerEvents: 'none',
         }}
       />
@@ -309,7 +269,7 @@ const Services = () => {
         transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
         className="diamond-clip"
         style={{
-          position: 'absolute', top: '15%', left: '6%',
+          position: 'absolute', top: '18%', left: '6%',
           width: 90, height: 90,
           background: 'rgba(79,195,195,0.06)',
           outline:    '1px solid rgba(79,195,195,0.18)',
@@ -321,7 +281,7 @@ const Services = () => {
         transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
         className="diamond-clip"
         style={{
-          position: 'absolute', top: '20%', right: '5%',
+          position: 'absolute', top: '22%', right: '5%',
           width: 60, height: 60,
           background: 'rgba(232,75,58,0.18)',
           pointerEvents: 'none',
@@ -332,7 +292,7 @@ const Services = () => {
         transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
         className="diamond-clip"
         style={{
-          position: 'absolute', bottom: '14%', left: '12%',
+          position: 'absolute', bottom: '20%', left: '12%',
           width: 32, height: 32,
           background: 'rgba(125,211,210,0.45)',
           pointerEvents: 'none',
@@ -343,36 +303,34 @@ const Services = () => {
         transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 3.5 }}
         className="diamond-clip"
         style={{
-          position: 'absolute', bottom: '18%', right: '14%',
+          position: 'absolute', bottom: '24%', right: '14%',
           width: 22, height: 22,
           background: 'rgba(79,195,195,0.7)',
           pointerEvents: 'none',
         }}
       />
-
-      {/* ── Corner architectural brackets ───────────────────────────────── */}
-      {[
-        { top: '14%', left: '4%' },
-        { top: '14%', right: '4%' },
-        { bottom: '14%', left: '4%' },
-        { bottom: '14%', right: '4%' },
-      ].map((pos, i) => (
-        <div
-          key={i}
-          style={{
-            position: 'absolute',
-            ...pos,
-            width:    18,
-            height:   18,
-            border:   '1px solid rgba(79,195,195,0.25)',
-            borderRight:  i % 2 === 0 ? 'none' : '1px solid rgba(79,195,195,0.25)',
-            borderLeft:   i % 2 === 1 ? 'none' : '1px solid rgba(79,195,195,0.25)',
-            borderBottom: i < 2     ? '1px solid rgba(79,195,195,0.25)' : 'none',
-            borderTop:    i >= 2    ? '1px solid rgba(79,195,195,0.25)' : 'none',
-            pointerEvents: 'none',
-          }}
-        />
-      ))}
+      <motion.div
+        animate={{ y: [0, -12, 0], rotate: [0, 8, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+        className="diamond-clip"
+        style={{
+          position: 'absolute', top: '50%', left: '4%',
+          width: 14, height: 14,
+          background: 'rgba(232,75,58,0.7)',
+          pointerEvents: 'none',
+        }}
+      />
+      <motion.div
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 2.5 }}
+        className="diamond-clip"
+        style={{
+          position: 'absolute', top: '55%', right: '7%',
+          width: 18, height: 18,
+          background: 'rgba(125,211,210,0.5)',
+          pointerEvents: 'none',
+        }}
+      />
 
       {/* ── Content ────────────────────────────────────────────────────── */}
       <div className="container mx-auto px-6 lg:px-12 relative" style={{ zIndex: 2 }}>
