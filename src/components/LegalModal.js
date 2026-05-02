@@ -106,17 +106,21 @@ const LegalModal = ({ type, onClose }) => {
           </div>
 
           {/* Body */}
-          <div style={{
-            overflowY:   'auto',
-            padding:     '1.5rem 2rem',
-            flex:        1,
-            color:       'var(--c-text-2)',
-            fontSize:    '0.86rem',
-            lineHeight:  1.75,
-            display:     'flex',
-            flexDirection: 'column',
-            gap:         '1.25rem',
-          }}>
+          <div
+            data-lenis-prevent
+            className="modal-scroll"
+            style={{
+              overflowY:   'auto',
+              padding:     '1.5rem 2rem',
+              flex:        1,
+              color:       'var(--c-text-2)',
+              fontSize:    '0.86rem',
+              lineHeight:  1.75,
+              display:     'flex',
+              flexDirection: 'column',
+              gap:         '1.25rem',
+            }}
+          >
             <p style={{ fontSize: '0.72rem', color: 'var(--c-text-3)', letterSpacing: '0.06em' }}>
               {t(`legal.${type}.updatedAt`)}
             </p>

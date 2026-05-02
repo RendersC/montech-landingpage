@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import LegalModal from './components/LegalModal';
 import SmoothScroll from './components/SmoothScroll';
 import TechMarquee from './components/TechMarquee';
+import ChatBot from './components/ChatBot';
 import { useTranslation } from 'react-i18next';
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
       </footer>
 
       <LegalModal type={legalModal} onClose={() => setLegalModal(null)} />
+      <ChatBot />
     </div>
     </SmoothScroll>
   );
