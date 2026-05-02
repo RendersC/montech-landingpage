@@ -400,6 +400,8 @@ const ChatBot = () => {
             {/* Messages */}
             <div
               ref={scrollRef}
+              data-lenis-prevent
+              className="modal-scroll"
               style={{
                 flex:    1,
                 overflowY: 'auto',

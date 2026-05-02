@@ -429,6 +429,8 @@ const Services = () => {
               animate={{ opacity: 1, scale: 1,    y: 0  }}
               exit={{ opacity: 0,   scale: 0.93, y: 28 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              data-lenis-prevent
+              className="modal-scroll"
               style={{
                 maxWidth:    640,
                 width:       '100%',

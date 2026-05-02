@@ -65,7 +65,7 @@ const CaseModal = ({ caseData, onClose }) => {
           </div>
 
           {/* Body */}
-          <div className="overflow-y-auto flex-1">
+          <div className="overflow-y-auto flex-1 modal-scroll" data-lenis-prevent>
             {/* Media Gallery */}
             {media.length > 0 && (
               <div className="relative bg-black">
